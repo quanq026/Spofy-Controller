@@ -19,7 +19,7 @@ CLIENT_ID = os.getenv("CLIENT_ID", "")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET", "")
 GITHUB_GIST_ID = os.getenv("GITHUB_GIST_ID", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
-GIST_FILENAME = os.getenv("GIST_FILENAME", "spotify_tokens.json")
+GIST_FILENAME = os.getenv("GIST_FILENAME", "")
 
 # ======================
 # GIST STORAGE

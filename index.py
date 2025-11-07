@@ -2,12 +2,18 @@ from fastapi import FastAPI, HTTPException
 import requests
 import os, json, time, base64
 
-app = FastAPI(title="Spotify IoT API (Gist Enhanced)")
 from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+origins = [
+    "https://your-frontend-domain.com",
+    "http://localhost:8000", # For local development
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # hoặc ["http://localhost:5500", "http://127.0.0.1:5500"] cho chặt chẽ
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

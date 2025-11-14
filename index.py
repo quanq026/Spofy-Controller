@@ -487,6 +487,21 @@ def debug():
         "timestamp": time.time()
     }
 
+@app.get("/gettoken")
+def get_token():
+    """
+    Trả về access_token hợp lệ.
+    Auto-renew nếu token sắp hết hạn.
+    """
+    try:
+        access_token = get_valid_token()
+        return {
+            "success": True,
+            "access_token": access_token
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/init")
 async def init_tokens(request: dict):
     """Initialize Gist with tokens"""

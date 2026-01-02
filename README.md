@@ -1,8 +1,10 @@
 # Spotify Controller
 
-**A powerful Spotify Web API wrapper with automatic token management and essential playback control endpoints.**
+**A simple Spotify Web API wrapper with automatic token management and essential playback control endpoints.**
 
 Spotify Controller provides a lightweight FastAPI server that simplifies Spotify Web API integration. It handles OAuth authentication, automatic token refresh via GitHub Gist storage, and exposes clean REST endpoints for controlling playback—play, pause, skip, shuffle, like tracks, manage queue, and seek. Includes a bonus responsive web frontend for easy interaction.
+
+> ⚠️ **Requirement:** A **Spotify Premium account** is required to use this application. The Spotify Web API's playback control endpoints (play, pause, skip, seek, etc.) are only available for Premium users.
 
 ## Preview
 

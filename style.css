@@ -109,7 +109,8 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 24px;
+    margin-top: 4px;
+    margin-bottom: 28px;
 }
 
 .status-badge {

@@ -27,15 +27,17 @@ body {
 
 .app-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 980px;
     height: 100%;
-    max-height: 850px;
+    max-height: 750px;
     background: linear-gradient(180deg, #2a2a2a 0%, #121212 100%);
+    border-radius: 24px;
     position: relative;
     display: flex;
     flex-direction: column;
-    padding: 24px;
-    gap: 20px;
+    padding: 20px;
+    gap: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 /* Animations */
@@ -64,7 +66,7 @@ body {
     width: 100%;
     opacity: 1;
     transition: opacity 0.3s;
-    gap: 24px;
+    gap: 16px;
     overflow: hidden;
 }
 
@@ -76,24 +78,26 @@ body {
 /* Layout Sections */
 .player-section {
     flex: 0 0 auto;
-    width: 400px;
+    width: 380px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 16px;
+    padding: 24px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .queue-section {
     flex: 0 0 auto;
-    width: 500px;
-    max-height: 700px;
+    width: 480px;
+    max-height: 650px;
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 16px;
-    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 24px 20px;
     overflow: hidden;
 }
 
@@ -249,6 +253,7 @@ button:disabled {
     height: 100%;
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 .queue-preview h3 {
@@ -256,11 +261,13 @@ button:disabled {
     font-weight: 600;
     margin-bottom: 16px;
     color: var(--text-main);
+    flex-shrink: 0;
 }
 
 .queue-list {
     overflow-y: auto;
     flex: 1;
+    min-height: 0;
     padding-right: 8px;
 }
 

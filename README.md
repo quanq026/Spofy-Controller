@@ -1,29 +1,36 @@
 # Spotify Controller
 
-A modern web-based Spotify player controller with real-time queue preview and playback control.
+**A powerful Spotify Web API wrapper with automatic token management and essential playback control endpoints.**
+
+Spotify Controller provides a lightweight FastAPI server that simplifies Spotify Web API integration. It handles OAuth authentication, automatic token refresh via GitHub Gist storage, and exposes clean REST endpoints for controlling playback—play, pause, skip, shuffle, like tracks, manage queue, and seek. Includes a bonus responsive web frontend for easy interaction.
 
 ## Features
 
-- **Now Playing Display** - Shows current track with album art, artist, and progress
-- **Playback Control** - Play, pause, next, previous track controls
-- **Queue Preview** - View upcoming tracks with thumbnail images
-- **Shuffle & Repeat** - Toggle shuffle mode and control repeat settings
-- **Like/Unlike Tracks** - Add or remove tracks from your library
-- **Seek Control** - Click progress bar to seek to any position
+### Spotify API Control
+- **Playback Management** - Play, pause, next, previous track control
+- **Queue Management** - Fetch queue list and skip to any track in queue
+- **Shuffle & Repeat** - Toggle shuffle mode and control repeat state
+- **Track Management** - Like/unlike tracks (add to/remove from library)
+- **Seek Control** - Seek to any position in current track
 - **Volume Control** - Adjust playback volume
-- **Responsive Design** - Works on desktop and mobile devices
-- **Real-time Updates** - Auto-sync with Spotify playback state
-- **Toast Notifications** - User-friendly notifications for actions
+- **Token Management** - Automatic OAuth token refresh and secure storage
+
+### Frontend UI (Bonus)
+- Clean, responsive web interface with dark theme
+- Real-time playback status updates (1s polling)
+- Queue preview with album thumbnails
+- Toast notifications for user feedback
+- Mobile-friendly responsive design
 
 ## Requirements
 
-### Backend
+### Backend (Core)
 - Python 3.8+
 - FastAPI
 - Requests library
 - Uvicorn
 
-### Frontend
+### Frontend (Optional)
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 - JavaScript enabled
 
@@ -138,20 +145,34 @@ The `vercel.json` config is already set up for FastAPI deployment.
 
 ## Usage
 
-1. **Initial Setup**
-   - Visit `http://localhost:8000`
-   - Backend will automatically fetch your current Spotify playback
+### API-First Approach
+Use the FastAPI endpoints directly in your applications:
 
-2. **Controls**
-   - Click play/pause button to control playback
-   - Use next/previous buttons to skip tracks
-   - Click shuffle button to toggle shuffle mode
-   - Click heart icon to like/unlike current track
-   - Click on queue items to play them
+```bash
+# Get current playback state
+curl http://localhost:8000/current
 
-3. **Progress/Seek**
-   - Hover over progress bar to see duration
-   - Click anywhere on progress bar to seek
+# Control playback
+curl http://localhost:8000/play
+curl http://localhost:8000/pause
+curl http://localhost:8000/next
+
+# Manage queue
+curl http://localhost:8000/queue
+curl http://localhost:8000/queue/1
+
+# Advanced controls
+curl http://localhost:8000/shuffle/true
+curl http://localhost:8000/seek/50
+curl http://localhost:8000/like
+```
+
+### Web UI (Optional)
+1. Visit `http://localhost:8000` in your browser
+2. App automatically connects to your Spotify playback
+3. Use the interface to control playback visually
+
+See [API Endpoints](#api-endpoints) for complete documentation.
 
 ## Troubleshooting
 
@@ -175,16 +196,19 @@ The `vercel.json` config is already set up for FastAPI deployment.
 
 ## Development
 
-### Backend
-- Built with FastAPI for fast, async endpoints
-- Uses Spotify Web API for playback control
-- GitHub Gist for persistent token storage
+### Backend (Primary)
+- **FastAPI** - High-performance async web framework
+- **Spotify Web API Integration** - Direct API calls for playback control
+- **Automatic Token Renewal** - Checks token expiration and auto-refreshes
+- **GitHub Gist Storage** - Secure token persistence without database
+- **CORS & Security** - Origin-based access control, sanitized error responses
 
-### Frontend
-- Vanilla JavaScript (no frameworks)
-- CSS with CSS Variables for theming
-- Responsive design with media queries
-- Toast notification system
+### Frontend (Bonus UI)
+- **Vanilla JavaScript** - No framework dependencies, lightweight
+- **CSS Variables** - Dynamic theming with dark Spotify-inspired design
+- **Responsive CSS** - Mobile and desktop layouts
+- **Real-time Polling** - 1-second interval updates to track playback state
+- **Toast Notifications** - User feedback system for actions
 
 ## License
 

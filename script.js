@@ -128,9 +128,17 @@ function renderQueue(items) {
             }
         };
 
+        // Thumbnail
+        const qThumb = document.createElement('div');
+        qThumb.className = 'q-thumb';
+        const qImg = document.createElement('img');
+        qImg.src = item.thumbnail || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect fill="%23333" width="40" height="40"/><text x="50%" y="50%" fill="%23666" font-size="12" text-anchor="middle" dy=".3em">♪</text></svg>';
+        qImg.alt = `${item.track} thumbnail`;
+        qThumb.appendChild(qImg);
+
+        // Index number overlay
         const qNum = document.createElement('span');
         qNum.className = 'q-num';
-        qNum.style.cssText = 'color:var(--text-sec); font-size:12px; width:20px;';
         qNum.textContent = item.index;
 
         const qInfo = document.createElement('div');
@@ -148,7 +156,7 @@ function renderQueue(items) {
 
         qInfo.appendChild(qTitle);
         qInfo.appendChild(qArtist);
-        queueItem.appendChild(qNum);
+        queueItem.appendChild(qThumb);
         queueItem.appendChild(qInfo);
         els.queueList.appendChild(queueItem);
     });

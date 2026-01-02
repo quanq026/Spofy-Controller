@@ -131,15 +131,6 @@ uvicorn index:app --reload --host 0.0.0.0 --port 8000
 - `GET /force-renew` - Manually renew access token
 - `POST /init` - Initialize tokens (requires access_token and refresh_token)
 
-## Security Features
-
-- **Environment Variables** - All credentials stored in `.env` (not in code)
-- **API Key Protection** - Optional header-based API key authentication
-- **Token Storage** - Spotify tokens stored in private GitHub Gist
-- **Auto Token Renewal** - Tokens automatically refresh before expiration
-- **CORS Protection** - Restricted to specified origins
-- **Sanitized Error Messages** - No sensitive data in error responses
-
 ## Deployment
 
 ### Deploy to Vercel
@@ -199,22 +190,6 @@ See [API Endpoints](#api-endpoints) for complete documentation.
 ### Queue not updating
 - Queue updates when track changes or on polling intervals
 - Try refreshing the page
-
-## Development
-
-### Backend (Primary)
-- **FastAPI** - High-performance async web framework
-- **Spotify Web API Integration** - Direct API calls for playback control
-- **Automatic Token Renewal** - Checks token expiration and auto-refreshes
-- **GitHub Gist Storage** - Secure token persistence without database
-- **CORS & Security** - Origin-based access control, sanitized error responses
-
-### Frontend (Bonus UI)
-- **Vanilla JavaScript** - No framework dependencies, lightweight
-- **CSS Variables** - Dynamic theming with dark Spotify-inspired design
-- **Responsive CSS** - Mobile and desktop layouts
-- **Real-time Polling** - 1-second interval updates to track playback state
-- **Toast Notifications** - User feedback system for actions
 
 ## License
 

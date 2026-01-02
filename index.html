@@ -30,69 +30,72 @@
 
                 <!-- Album Art -->
                 <div class="album-art-container">
-                <img id="track-art" src="" alt="Album Art">
-                <div class="glow-effect"></div>
-            </div>
-
-            <!-- Track Info -->
-            <div class="track-info">
-                <h1 id="track-name">Track Name</h1>
-                <p id="artist-name">Artist Name</p>
-            </div>
-
-            <!-- Progress -->
-            <div class="progress-container">
-                <div class="time-labels">
-                    <span id="current-time">0:00</span>
-                    <span id="total-time">0:00</span>
+                    <img id="track-art" src="" alt="Album Art">
+                    <div class="glow-effect"></div>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-                </div>
-            </div>
 
-            <!-- Controls -->
-            <div class="controls">
-                <button class="btn-icon" id="btn-shuffle" onclick="toggleShuffle()" aria-label="Toggle shuffle mode">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l5 5M4 4l5 5" />
-                    </svg>
-                </button>
-                <button class="btn-icon" id="btn-prev" onclick="control('prev')" aria-label="Previous track">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                    </svg>
-                </button>
-                <button class="btn-play" id="btn-play-pause" onclick="togglePlay()" aria-label="Play/Pause">
-                    <svg id="icon-play" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
-                    <svg id="icon-pause" class="hidden" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                    </svg>
-                </button>
-                <button class="btn-icon" id="btn-next" onclick="control('next')" aria-label="Next track">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-                    </svg>
-                </button>
-                <button class="btn-icon" id="btn-like" onclick="toggleLike()" aria-label="Like/Unlike track">
-                    <svg id="icon-heart" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path
-                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                </button>
-            </div>
+                <!-- Track Info -->
+                <div class="track-info">
+                    <h1 id="track-name">Track Name</h1>
+                    <p id="artist-name">Artist Name</p>
+                </div>
+
+                <!-- Progress -->
+                <div class="progress-container">
+                    <div class="time-labels">
+                        <span id="current-time">0:00</span>
+                        <span id="total-time">0:00</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="controls">
+                    <button class="btn-icon" id="btn-shuffle" onclick="toggleShuffle()"
+                        aria-label="Toggle shuffle mode">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l5 5M4 4l5 5" />
+                        </svg>
+                    </button>
+                    <button class="btn-icon" id="btn-prev" onclick="control('prev')" aria-label="Previous track">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                        </svg>
+                    </button>
+                    <button class="btn-play" id="btn-play-pause" onclick="togglePlay()" aria-label="Play/Pause">
+                        <svg id="icon-play" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                        <svg id="icon-pause" class="hidden" width="32" height="32" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                        </svg>
+                    </button>
+                    <button class="btn-icon" id="btn-next" onclick="control('next')" aria-label="Next track">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                        </svg>
+                    </button>
+                    <button class="btn-icon" id="btn-like" onclick="toggleLike()" aria-label="Like/Unlike track">
+                        <svg id="icon-heart" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Queue Section -->
             <div class="queue-section">
                 <div class="queue-preview" id="queue-container">
-                <h3>Up Next</h3>
-                <div class="queue-list" id="queue-list">
-                    <!-- Queue items injected here -->
-                </div>
+                    <h3>Up Next</h3>
+                    <div class="queue-list" id="queue-list">
+                        <!-- Queue items injected here -->
+                    </div>
                 </div>
             </div>
         </div>

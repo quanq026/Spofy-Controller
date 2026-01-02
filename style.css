@@ -108,17 +108,19 @@ header {
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-bottom: 24px;
 }
 
 .status-badge {
     background: var(--glass);
-    padding: 6px 12px;
+    padding: 6px 16px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--primary);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
 }
 
 .album-art-container {

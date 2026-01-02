@@ -1,5 +1,6 @@
-const API_URL = "http://localhost:8000";
-// Open Mode: No key needed by default. If you set a key, add ?key=YOUR_KEY here manually or in a settings UI.
+const API_URL = "";
+// Open Mode: No key needed by default. If you set a key, add ?key=YOUR_KEY query param (requires updating this script) 
+// or mostly, just use Headers. But for UI, we assume Open Mode or Same-Origin.
 const API_KEY_PARAM = "";
 
 let isPlaying = false;

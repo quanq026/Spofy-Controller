@@ -1,4 +1,6 @@
 from fastapi import FastAPI, HTTPException, Header, Security, Depends
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from typing import Optional
 import requests
 import os, json, time, base64
@@ -237,28 +239,21 @@ def parse_track_data(data: dict):
 # ======================
 # ROUTES
 # ======================
+# ======================
+# STATIC SERVING (UI)
+# ======================
+
 @app.get("/")
-def root():
-    cached = load_token_from_gist()
-    has_tokens = bool(cached.get("access_token") and cached.get("refresh_token"))
-    
-    return {
-        "status": "✅ Ready" if has_tokens else "⚠️ Not initialized",
-        "storage": "GitHub Gist",
-        "endpoints": {
-            "/current": "Get detailed playback state",
-            "/play": "Resume playback",
-            "/pause": "Pause playback",
-            "/next": "Skip to next track",
-            "/prev": "Skip to previous track",
-            "/like": "Save current track to library",
-            "/dislike": "Remove current track from library",
-            "/force-renew": "Force token renewal",
-            "/debug": "Debug token status",
-            "/init": "Initialize Gist (POST with tokens)",
-        },
-        "setup_required": not has_tokens
-    }
+def serve_ui():
+    return FileResponse("index.html")
+
+@app.get("/style.css")
+def serve_css():
+    return FileResponse("style.css")
+
+@app.get("/script.js")
+def serve_js():
+    return FileResponse("script.js")
 
 @app.get("/current")
 def current():

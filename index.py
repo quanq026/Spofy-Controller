@@ -259,7 +259,7 @@ def current(auth: str = Depends(verify_api_key)):
         data = res.json()
         parsed = parse_track_data(data)
 
-        # ✅ Kiểm tra bài này có nằm trong "Liked Songs" không
+        # Kiểm tra bài này có nằm trong "Liked Songs" không
         track_id = parsed.get("track_id")
         if track_id:
             like_res = spotify_request("GET", f"/me/tracks/contains?ids={track_id}", access_token)
@@ -449,7 +449,7 @@ def play_from_queue(index: int, auth: str = Depends(verify_api_key)):
     if context_uri:
         body = {"context_uri": context_uri, "offset": {"uri": f"spotify:track:{track_id}"}}
     else:
-        # Nếu không có context (ví dụ đang phát single lẻ)
+        # Nếu không có context
         body = {"uris": [f"spotify:track:{track_id}"]}
 
     res = spotify_request("PUT", "/me/player/play", access_token, json=body)

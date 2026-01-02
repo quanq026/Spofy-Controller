@@ -21,13 +21,15 @@
 
         <!-- Main Player -->
         <div id="player-view" class="state-view hidden">
-            <!-- Header -->
-            <header>
-                <div class="status-badge" id="device-name">Web Player</div>
-            </header>
+            <!-- Player Section -->
+            <div class="player-section">
+                <!-- Header -->
+                <header>
+                    <div class="status-badge" id="device-name">Web Player</div>
+                </header>
 
-            <!-- Album Art -->
-            <div class="album-art-container">
+                <!-- Album Art -->
+                <div class="album-art-container">
                 <img id="track-art" src="" alt="Album Art">
                 <div class="glow-effect"></div>
             </div>
@@ -82,12 +84,15 @@
                     </svg>
                 </button>
             </div>
+            </div>
 
-            <!-- Queue Preview -->
-            <div class="queue-preview" id="queue-container">
+            <!-- Queue Section -->
+            <div class="queue-section">
+                <div class="queue-preview" id="queue-container">
                 <h3>Up Next</h3>
                 <div class="queue-list" id="queue-list">
                     <!-- Queue items injected here -->
+                </div>
                 </div>
             </div>
         </div>

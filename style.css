@@ -174,17 +174,19 @@ header {
 
 .progress-bar {
     width: 100%;
-    height: 4px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
     position: relative;
+    transform: scaleY(0.67);
+    transform-origin: center;
+    transition: transform 0.2s ease;
 }
 
 .progress-bar:hover {
-    height: 6px;
-    transition: height 0.1s ease;
+    transform: scaleY(1);
 }
 
 .progress-fill {

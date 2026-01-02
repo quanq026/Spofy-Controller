@@ -13,34 +13,27 @@
 
 <body>
     <div class="app-container">
-        <!-- Connecting State -->
         <div id="loading-state" class="state-view">
             <div class="spinner"></div>
             <p>Connecting to Spotify...</p>
         </div>
 
-        <!-- Main Player -->
         <div id="player-view" class="state-view hidden">
-            <!-- Player Section -->
             <div class="player-section">
-                <!-- Header -->
                 <header>
                     <div class="status-badge" id="device-name">Web Player</div>
                 </header>
 
-                <!-- Album Art -->
                 <div class="album-art-container">
                     <img id="track-art" src="" alt="Album Art">
                     <div class="glow-effect"></div>
                 </div>
 
-                <!-- Track Info -->
                 <div class="track-info">
                     <h1 id="track-name">Track Name</h1>
                     <p id="artist-name">Artist Name</p>
                 </div>
 
-                <!-- Progress -->
                 <div class="progress-container">
                     <div class="time-labels">
                         <span id="current-time">0:00</span>
@@ -51,7 +44,6 @@
                     </div>
                 </div>
 
-                <!-- Controls -->
                 <div class="controls">
                     <button class="btn-icon" id="btn-shuffle" onclick="toggleShuffle()"
                         aria-label="Toggle shuffle mode">
@@ -89,12 +81,10 @@
                 </div>
             </div>
 
-            <!-- Queue Section -->
             <div class="queue-section">
                 <div class="queue-preview" id="queue-container">
                     <h3>Up Next</h3>
                     <div class="queue-list" id="queue-list">
-                        <!-- Queue items injected here -->
                     </div>
                 </div>
             </div>

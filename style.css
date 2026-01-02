@@ -40,7 +40,6 @@ body {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* Animations */
 @keyframes spin {
     100% {
         transform: rotate(360deg);
@@ -62,7 +61,6 @@ body {
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    /* Both sections will have same height automatically */
     justify-content: center;
     width: 100%;
     opacity: 1;
@@ -76,7 +74,6 @@ body {
     opacity: 0;
 }
 
-/* Layout Sections */
 .player-section {
     flex: 0 0 auto;
     width: 380px;
@@ -84,7 +81,6 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* Center content vertically when stretched */
     padding: 24px 20px;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 20px;
@@ -103,7 +99,6 @@ body {
     overflow: hidden;
 }
 
-/* Player UI */
 header {
     width: 100%;
     display: flex;
@@ -160,7 +155,6 @@ header {
     color: var(--text-sec);
 }
 
-/* Progress */
 .progress-container {
     width: 100%;
     margin-bottom: 28px;
@@ -199,7 +193,6 @@ header {
     pointer-events: none;
 }
 
-/* Controls */
 .controls {
     display: flex;
     align-items: center;
@@ -253,7 +246,6 @@ button:disabled {
     transform: scale(1.05);
 }
 
-/* Queue */
 .queue-preview {
     width: 100%;
     height: 100%;
@@ -313,7 +305,6 @@ button:disabled {
     opacity: 1;
 }
 
-/* Queue Thumbnail */
 .q-thumb {
     width: 48px;
     height: 48px;
@@ -394,7 +385,6 @@ button:disabled {
     color: var(--text-sec);
 }
 
-/* Toast Notifications */
 .toast {
     position: fixed;
     bottom: 20px;
@@ -426,19 +416,16 @@ button:disabled {
     color: #000;
 }
 
-/* Focus styles for accessibility */
 button:focus-visible,
 .queue-item:focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
 }
 
-/* Cursor pointer for interactive elements */
 .queue-item {
     cursor: pointer;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .app-container {
         max-width: 100%;

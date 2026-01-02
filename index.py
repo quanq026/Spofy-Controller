@@ -37,14 +37,8 @@ APP_API_KEY = os.getenv("APP_API_KEY", "")
 # SECURITY
 # ======================
 async def verify_api_key(x_api_key: str = Header(None)):
-    """
-    Validates the API Key via Header (X-API-Key).
-    If APP_API_KEY is not set in env, allows all requests (Open Mode).
-    """
+    """Validates the API Key via Header (X-API-Key)."""
     if not APP_API_KEY:
-        # Open mode: No key configured, so we allow access.
-        # This is suitable for personal/local use where you ONLY care about 
-        # protecting the Gist/Spotify credentials (which are already masked).
         return
 
     if x_api_key and x_api_key == APP_API_KEY:
@@ -360,7 +354,7 @@ def dislike_track(auth: str = Depends(verify_api_key)):
 
 @app.get("/queue")
 def get_queue(auth: str = Depends(verify_api_key)):
-    """Lấy danh sách bài hát trong hàng chờ (tối đa 30 bài)"""
+    """Lấy danh sách bài hát trong hàng chờ"""
     access_token = get_valid_token()
     res = spotify_request("GET", "/me/player/queue", access_token)
 
@@ -371,7 +365,7 @@ def get_queue(auth: str = Depends(verify_api_key)):
     queue_items = data.get("queue", [])
 
     queue_list = []
-    for i, item in enumerate(queue_items[:20]):  # Giới hạn 30 bài
+    for i, item in enumerate(queue_items[:20]):
         album = item.get("album", {})
         images = album.get("images", [])
         thumbnail = images[1]["url"] if len(images) > 1 else (images[0]["url"] if images else "")
@@ -386,7 +380,6 @@ def get_queue(auth: str = Depends(verify_api_key)):
             "id": item.get("id", "")
         })
 
-    # Bài hiện đang phát (nếu có)
     current = data.get("currently_playing")
     current_info = None
     if current:
@@ -430,8 +423,6 @@ def toggle_shuffle(state: str, auth: str = Depends(verify_api_key)):
 def play_from_queue(index: int, auth: str = Depends(verify_api_key)):
     """Phát bài trong context hiện tại thay vì reset queue"""
     access_token = get_valid_token()
-
-    # Lấy thông tin player (để biết context_uri)
     player_res = spotify_request("GET", "/me/player", access_token)
     if player_res.status_code != 200:
         raise HTTPException(status_code=player_res.status_code, detail="Cannot get player info")
@@ -439,7 +430,6 @@ def play_from_queue(index: int, auth: str = Depends(verify_api_key)):
     player_data = player_res.json()
     context_uri = player_data.get("context", {}).get("uri", None)
 
-    # Lấy queue
     queue_res = spotify_request("GET", "/me/player/queue", access_token)
     if queue_res.status_code != 200:
         raise HTTPException(status_code=queue_res.status_code, detail="Failed to get queue")
@@ -481,8 +471,6 @@ def seek_position(percent: int, auth: str = Depends(verify_api_key)):
         raise HTTPException(status_code=400, detail="Percent must be between 0 and 100")
 
     access_token = get_valid_token()
-    
-    # First get current playback to get track duration
     current_res = spotify_request("GET", "/me/player", access_token)
     if current_res.status_code != 200:
         handle_spotify_error(current_res)
@@ -494,8 +482,6 @@ def seek_position(percent: int, auth: str = Depends(verify_api_key)):
         raise HTTPException(status_code=400, detail="Cannot determine track duration")
     
     position_ms = int((percent / 100) * duration_ms)
-    
-    # Seek to position
     res = spotify_request("PUT", f"/me/player/seek?position_ms={position_ms}", access_token)
     
     if res.status_code in [204, 200]:
@@ -557,10 +543,7 @@ def debug():
 
 @app.get("/gettoken")
 def get_token():
-    """
-    Trả về access_token hợp lệ.
-    Auto-renew nếu token sắp hết hạn.
-    """
+    """Trả về access_token hợp lệ."""
     try:
         access_token = get_valid_token()
         return {

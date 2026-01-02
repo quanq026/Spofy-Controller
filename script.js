@@ -1,6 +1,4 @@
 const API_URL = "";
-// Open Mode: No key needed by default. If you set a key, add ?key=YOUR_KEY query param (requires updating this script) 
-// or mostly, just use Headers. But for UI, we assume Open Mode or Same-Origin.
 const API_KEY_PARAM = "";
 
 let isPlaying = false;
@@ -15,7 +13,7 @@ const els = {
     title: document.getElementById("track-name"),
     artist: document.getElementById("artist-name"),
     progressFill: document.getElementById("progress-fill"),
-    progressBar: null, // Will be set after DOM load
+    progressBar: null,
     currTime: document.getElementById("current-time"),
     totTime: document.getElementById("total-time"),
     playIcon: document.getElementById("icon-play"),
@@ -41,15 +39,12 @@ async function fetchState() {
         const data = await res.json();
 
         if (!data.is_playing && data.message === "No active playback") {
-            // Show "Nothing Playing" state if needed, or just stay as is
-            // For now we just keep polling
             return;
         }
 
         updateUI(data);
         el_showPlayer();
 
-        // Also update queue occasionally (or every time? Queue is heavy? Let's do it 10%)
         if (Math.random() < 0.2) fetchQueue();
 
     } catch (e) {
@@ -128,7 +123,6 @@ function renderQueue(items) {
             }
         };
 
-        // Thumbnail
         const qThumb = document.createElement('div');
         qThumb.className = 'q-thumb';
         const qImg = document.createElement('img');
@@ -136,7 +130,6 @@ function renderQueue(items) {
         qImg.alt = `${item.track} thumbnail`;
         qThumb.appendChild(qImg);
 
-        // Index number overlay
         const qNum = document.createElement('span');
         qNum.className = 'q-num';
         qNum.textContent = item.index;
@@ -162,7 +155,6 @@ function renderQueue(items) {
     });
 }
 
-// Controls
 async function control(action) {
     if (isActionInProgress) return;
     isActionInProgress = true;
@@ -173,7 +165,7 @@ async function control(action) {
             showToast(`Failed to ${action}`, 'error');
             return;
         }
-        setTimeout(fetchState, 200); // Quick refresh
+        setTimeout(fetchState, 200);
     } catch (e) {
         console.error(`Control error (${action}):`, e);
         showToast('Network error', 'error');
@@ -235,7 +227,6 @@ function el_showPlayer() {
     els.player.classList.remove("hidden");
 }
 
-// Toast notification system
 function showToast(message, type = 'info') {
     const existingToast = document.querySelector('.toast');
     if (existingToast) existingToast.remove();
@@ -252,7 +243,6 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// Initialize after DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Set up progress bar click handler for seeking
     const progressBar = document.querySelector('.progress-bar');
@@ -279,6 +269,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Init
 setInterval(fetchState, 1000);
 fetchState();

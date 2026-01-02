@@ -106,7 +106,7 @@ header {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .status-badge {
@@ -121,9 +121,9 @@ header {
 
 .album-art-container {
     width: 100%;
-    max-width: 260px;
+    max-width: 285px;
     aspect-ratio: 1;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     border-radius: 12px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     position: relative;
@@ -138,12 +138,12 @@ header {
 
 .track-info {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     width: 100%;
 }
 
 #track-name {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     margin-bottom: 6px;
     white-space: nowrap;
@@ -152,14 +152,14 @@ header {
 }
 
 #artist-name {
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-sec);
 }
 
 /* Progress */
 .progress-container {
     width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .time-labels {
@@ -199,7 +199,7 @@ header {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    margin-bottom: 0;
+    margin-bottom: 8px;
 }
 
 button {

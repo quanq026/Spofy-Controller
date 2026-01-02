@@ -4,6 +4,10 @@
 
 Spotify Controller provides a lightweight FastAPI server that simplifies Spotify Web API integration. It handles OAuth authentication, automatic token refresh via GitHub Gist storage, and exposes clean REST endpoints for controlling playback—play, pause, skip, shuffle, like tracks, manage queue, and seek. Includes a bonus responsive web frontend for easy interaction.
 
+## Preview
+
+![Spotify Controller Preview](https://github.com/quanq026/Spo/blob/main/image.png?raw=true)
+
 ## Features
 
 ### Spotify API Control

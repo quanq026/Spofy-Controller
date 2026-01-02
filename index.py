@@ -10,9 +10,10 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "https://your-frontend-domain.com",
-    "http://localhost:8000", # For local development
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
     "http://127.0.0.1:5500",
+    "http://localhost:5500",
 ]
 
 app.add_middleware(
@@ -28,7 +29,6 @@ app.add_middleware(
 CLIENT_ID = os.getenv("CLIENT_ID", "")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET", "")
 GITHUB_GIST_ID = os.getenv("GITHUB_GIST_ID", "")
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
 GIST_FILENAME = os.getenv("GIST_FILENAME", "")
 APP_API_KEY = os.getenv("APP_API_KEY", "")
@@ -256,7 +256,7 @@ def serve_js():
     return FileResponse("script.js")
 
 @app.get("/current")
-def current():
+def current(auth: str = Depends(verify_api_key)):
     """Lấy trạng thái playback hiện tại, kèm thông tin liked"""
     access_token = get_valid_token()
     res = spotify_request("GET", "/me/player", access_token)
@@ -470,6 +470,39 @@ def play_from_queue(index: int, auth: str = Depends(verify_api_key)):
             "message": f"Now playing {target_track.get('name')} by {', '.join(a['name'] for a in target_track.get('artists', []))}",
             "track_id": track_id,
             "used_context": bool(context_uri)
+        }
+    else:
+        handle_spotify_error(res)
+
+@app.get("/seek/{percent}")
+def seek_position(percent: int, auth: str = Depends(verify_api_key)):
+    """Seek to a specific position in the track (0-100%)"""
+    if not (0 <= percent <= 100):
+        raise HTTPException(status_code=400, detail="Percent must be between 0 and 100")
+
+    access_token = get_valid_token()
+    
+    # First get current playback to get track duration
+    current_res = spotify_request("GET", "/me/player", access_token)
+    if current_res.status_code != 200:
+        handle_spotify_error(current_res)
+    
+    current_data = current_res.json()
+    duration_ms = current_data.get("item", {}).get("duration_ms", 0)
+    
+    if duration_ms == 0:
+        raise HTTPException(status_code=400, detail="Cannot determine track duration")
+    
+    position_ms = int((percent / 100) * duration_ms)
+    
+    # Seek to position
+    res = spotify_request("PUT", f"/me/player/seek?position_ms={position_ms}", access_token)
+    
+    if res.status_code in [204, 200]:
+        return {
+            "success": True,
+            "position_ms": position_ms,
+            "percent": percent
         }
     else:
         handle_spotify_error(res)

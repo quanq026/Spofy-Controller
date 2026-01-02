@@ -108,17 +108,19 @@ header {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-bottom: 24px;
+    align-items: center;
+    margin-bottom: 14px;
 }
 
 .status-badge {
     background: var(--glass);
-    padding: 6px 12px;
+    padding: 6px 16px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--primary);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
 }
 
 .album-art-container {
@@ -174,17 +176,19 @@ header {
 
 .progress-bar {
     width: 100%;
-    height: 4px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
     position: relative;
+    transform: scaleY(0.67);
+    transform-origin: center;
+    transition: transform 0.2s ease;
 }
 
 .progress-bar:hover {
-    height: 6px;
-    transition: height 0.1s ease;
+    transform: scaleY(1);
 }
 
 .progress-fill {

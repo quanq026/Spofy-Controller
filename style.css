@@ -121,9 +121,9 @@ body {
 
 .skeleton {
     background: linear-gradient(90deg,
-            rgba(255, 255, 255, 0.05),
-            rgba(255, 255, 255, 0.1),
-            rgba(255, 255, 255, 0.05));
+            rgba(255, 255, 255, 0.05) 0%,
+            rgba(255, 255, 255, 0.15) 50%,
+            rgba(255, 255, 255, 0.05) 100%);
     background-size: 1000px 100%;
     animation: skeleton-loading 2s infinite;
     border-radius: 8px;
@@ -134,17 +134,20 @@ body {
     height: 200px;
     border-radius: 12px;
     margin-bottom: 20px;
+    flex-shrink: 0;
 }
 
 .skeleton-text {
     width: 80%;
     height: 20px;
     margin-bottom: 12px;
+    border-radius: 8px;
 }
 
 .skeleton-text-sm {
     width: 60%;
     height: 14px;
+    border-radius: 6px;
 }
 
 .player-section {

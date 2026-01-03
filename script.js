@@ -121,11 +121,15 @@ function updateUI(data) {
     isPlaying = data.is_playing;
     togglePlayIcon(isPlaying);
 
-    // Progress
-    els.progressFill.style.width = data.progress_percent + "%";
-    const [curr, tot] = data.progress.split(" / ");
-    els.currTime.innerText = curr;
-    els.totTime.innerText = tot;
+    // Progress - with safety check for undefined data.progress
+    if (data.progress_percent !== undefined) {
+        els.progressFill.style.width = data.progress_percent + "%";
+    }
+    if (data.progress) {
+        const [curr, tot] = data.progress.split(" / ");
+        els.currTime.innerText = curr;
+        els.totTime.innerText = tot;
+    }
 
     // Like Status
     const heartIcon = els.likeBtn.querySelector('svg');

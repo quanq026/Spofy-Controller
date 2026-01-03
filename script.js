@@ -35,7 +35,7 @@ function switchState(newState) {
     if (stateChangeTimeout) {
         clearTimeout(stateChangeTimeout);
     }
-    
+
     // Debounce state changes to prevent race conditions
     stateChangeTimeout = setTimeout(() => {
         // Single DOM operation - change data-state attribute on container
@@ -43,16 +43,16 @@ function switchState(newState) {
         if (container) {
             container.setAttribute('data-state', newState);
         }
-        
+
         currentState = newState;
         isDeviceOffline = (newState === 'offline');
-        
+
         if (newState === 'offline') {
             disableAllControls();
         } else if (newState === 'player') {
             enableAllControls();
         }
-        
+
         stateChangeTimeout = null;
     }, 50); // 50ms debounce
 }

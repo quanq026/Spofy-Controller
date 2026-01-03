@@ -66,7 +66,8 @@ body {
     opacity: 1;
     gap: 16px;
     overflow: hidden;
-    display: none !important; /* Hidden by default */
+    display: none !important;
+    /* Hidden by default */
 }
 
 /* Show only the active state based on parent's data-state attribute */

@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <div class="app-container">
+    <div class="app-container" data-state="loading">
         <div id="loading-state" class="state-view">
             <div class="player-section">
                 <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;">
@@ -44,7 +44,7 @@
             </div>
         </div>
 
-        <div id="offline-state" class="state-view hidden">
+        <div id="offline-state" class="state-view">
             <div class="offline-container">
                 <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <path d="M20 21H4M9 9h6m-6 4h6m-10-7a9 9 0 1 1 18 0" />
@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        <div id="player-view" class="state-view hidden">
+        <div id="player-view" class="state-view">
             <div class="player-section">
                 <header>
                     <div class="status-badge" id="device-name">Web Player</div>

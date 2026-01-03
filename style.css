@@ -56,17 +56,24 @@ body {
     margin-bottom: 20px;
 }
 
+/* State views - hidden by default */
 .state-view {
     flex: 1;
-    display: flex;
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
     width: 100%;
     opacity: 1;
-    transition: opacity 0.3s;
     gap: 16px;
     overflow: hidden;
+    display: none !important; /* Hidden by default */
+}
+
+/* Show only the active state based on parent's data-state attribute */
+.app-container[data-state="loading"] #loading-state,
+.app-container[data-state="offline"] #offline-state,
+.app-container[data-state="player"] #player-view {
+    display: flex !important;
 }
 
 .hidden {

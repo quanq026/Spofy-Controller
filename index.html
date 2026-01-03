@@ -20,6 +20,17 @@
             <p>Connecting to Spotify...</p>
         </div>
 
+        <div id="offline-state" class="state-view hidden">
+            <div class="offline-container">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M20 21H4M9 9h6m-6 4h6m-10-7a9 9 0 1 1 18 0" />
+                </svg>
+                <h2>Device Offline</h2>
+                <p class="offline-message">Playback is not available right now</p>
+                <p class="offline-hint">Start playing music on your Spotify device to continue</p>
+            </div>
+        </div>
+
         <div id="player-view" class="state-view hidden">
             <div class="player-section">
                 <header>

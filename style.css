@@ -74,6 +74,79 @@ body {
     opacity: 0;
 }
 
+/* Offline State */
+.offline-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+}
+
+.offline-container svg {
+    color: var(--text-sec);
+    margin-bottom: 12px;
+}
+
+.offline-container h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.offline-message {
+    color: var(--text-sec);
+    font-size: 14px;
+    margin: 0;
+}
+
+.offline-hint {
+    color: var(--text-sec);
+    font-size: 12px;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* Skeleton Loader */
+@keyframes skeleton-loading {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.1),
+            rgba(255, 255, 255, 0.05));
+    background-size: 1000px 100%;
+    animation: skeleton-loading 2s infinite;
+    border-radius: 8px;
+}
+
+.skeleton-avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.skeleton-text {
+    width: 80%;
+    height: 20px;
+    margin-bottom: 12px;
+}
+
+.skeleton-text-sm {
+    width: 60%;
+    height: 14px;
+}
+
 .player-section {
     flex: 0 0 auto;
     width: 380px;

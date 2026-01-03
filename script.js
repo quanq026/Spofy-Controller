@@ -4,11 +4,14 @@ const API_KEY_PARAM = "";
 let isPlaying = false;
 let currentTrackId = null;
 let isActionInProgress = false;
+let isDeviceOffline = false;
+let consecutiveFailures = 0;
 
 // UI Elements
 const els = {
     player: document.getElementById("player-view"),
     loading: document.getElementById("loading-state"),
+    offline: document.getElementById("offline-state"),
     art: document.getElementById("track-art"),
     title: document.getElementById("track-name"),
     artist: document.getElementById("artist-name"),
@@ -28,20 +31,20 @@ async function fetchState() {
         const res = await fetch(`${API_URL}/current${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
 
         if (!res.ok) {
-            if (res.status === 401) {
-                showToast('Authentication failed', 'error');
-            } else if (res.status >= 500) {
-                showToast('Server error, retrying...', 'error');
-            }
+            handleFetchError(res.status);
             return;
         }
 
         const data = await res.json();
 
         if (!data.is_playing && data.message === "No active playback") {
+            showOfflineState();
             return;
         }
 
+        // Success - reset failure counter and show player
+        consecutiveFailures = 0;
+        isDeviceOffline = false;
         updateUI(data);
         el_showPlayer();
 
@@ -49,8 +52,56 @@ async function fetchState() {
 
     } catch (e) {
         console.error("Poll error", e);
-        showToast('Connection error', 'error');
+        handleFetchError(null);
     }
+}
+
+function handleFetchError(status) {
+    consecutiveFailures++;
+
+    if (status === 401) {
+        showToast('Authentication failed', 'error');
+        showOfflineState();
+        isDeviceOffline = true;
+    } else if (status === 404 || status === 403) {
+        // Device offline or not available
+        if (consecutiveFailures >= 2 && !isDeviceOffline) {
+            showOfflineState();
+            isDeviceOffline = true;
+        }
+    } else if (status >= 500 || status === null) {
+        showToast('Connection error, retrying...', 'error');
+    }
+}
+
+function showOfflineState() {
+    els.offline.classList.remove("hidden");
+    els.player.classList.add("hidden");
+    els.loading.classList.add("hidden");
+    disableAllControls();
+}
+
+function el_showPlayer() {
+    els.loading.classList.add("hidden");
+    els.offline.classList.add("hidden");
+    els.player.classList.remove("hidden");
+    enableAllControls();
+}
+
+function disableAllControls() {
+    document.querySelectorAll('button.btn-icon, button.btn-play').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    });
+}
+
+function enableAllControls() {
+    document.querySelectorAll('button.btn-icon, button.btn-play').forEach(btn => {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    });
 }
 
 function updateUI(data) {
@@ -156,15 +207,27 @@ function renderQueue(items) {
 }
 
 async function control(action) {
-    if (isActionInProgress) return;
+    if (isActionInProgress || isDeviceOffline) {
+        if (isDeviceOffline) {
+            showToast('Device is offline', 'error');
+        }
+        return;
+    }
     isActionInProgress = true;
 
     try {
         const res = await fetch(`${API_URL}/${action}${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
         if (!res.ok) {
-            showToast(`Failed to ${action}`, 'error');
+            if (res.status === 404 || res.status === 403) {
+                showOfflineState();
+                isDeviceOffline = true;
+                showToast('Device is offline', 'error');
+            } else {
+                showToast(`Failed to ${action}`, 'error');
+            }
             return;
         }
+        consecutiveFailures = 0;
         setTimeout(fetchState, 200);
     } catch (e) {
         console.error(`Control error (${action}):`, e);
@@ -199,12 +262,23 @@ function toggleLike() {
 }
 
 async function playQueue(index) {
+    if (isDeviceOffline) {
+        showToast('Device is offline', 'error');
+        return;
+    }
     try {
         const res = await fetch(`${API_URL}/queue/${index}${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
         if (!res.ok) {
-            showToast('Failed to play track', 'error');
+            if (res.status === 404 || res.status === 403) {
+                showOfflineState();
+                isDeviceOffline = true;
+                showToast('Device is offline', 'error');
+            } else {
+                showToast('Failed to play track', 'error');
+            }
             return;
         }
+        consecutiveFailures = 0;
         setTimeout(fetchState, 500);
     } catch (e) {
         console.error('Queue play error:', e);
@@ -251,14 +325,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progressBar) {
         progressBar.style.cursor = 'pointer';
         progressBar.addEventListener('click', async (e) => {
+            if (isDeviceOffline) {
+                showToast('Device is offline', 'error');
+                return;
+            }
             const rect = progressBar.getBoundingClientRect();
             const percent = ((e.clientX - rect.left) / rect.width) * 100;
 
             try {
                 const res = await fetch(`${API_URL}/seek/${Math.round(percent)}${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
                 if (!res.ok) {
-                    showToast('Seek failed', 'error');
+                    if (res.status === 404 || res.status === 403) {
+                        showOfflineState();
+                        isDeviceOffline = true;
+                        showToast('Device is offline', 'error');
+                    } else {
+                        showToast('Seek failed', 'error');
+                    }
                 } else {
+                    consecutiveFailures = 0;
                     setTimeout(fetchState, 100);
                 }
             } catch (e) {

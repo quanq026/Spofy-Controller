@@ -37,7 +37,8 @@ async function fetchState() {
 
         const data = await res.json();
 
-        if (!data.is_playing && data.message === "No active playback") {
+        // No active playback - show offline
+        if (!data.is_playing && data.message) {
             showOfflineState();
             return;
         }
@@ -45,13 +46,11 @@ async function fetchState() {
         // Validate required data fields - if missing, show offline
         if (!data.track || !data.track_id || !data.progress) {
             showOfflineState();
-            isDeviceOffline = true;
             return;
         }
 
         // Success - reset failure counter and show player
         consecutiveFailures = 0;
-        isDeviceOffline = false;
         updateUI(data);
         el_showPlayer();
 
@@ -80,16 +79,20 @@ function handleFetchError(status) {
 }
 
 function showOfflineState() {
+    // Ensure only offline state is visible
     els.offline.classList.remove("hidden");
     els.player.classList.add("hidden");
     els.loading.classList.add("hidden");
+    isDeviceOffline = true;
     disableAllControls();
 }
 
 function el_showPlayer() {
+    // Ensure only player is visible
     els.loading.classList.add("hidden");
     els.offline.classList.add("hidden");
     els.player.classList.remove("hidden");
+    isDeviceOffline = false;
     enableAllControls();
 }
 

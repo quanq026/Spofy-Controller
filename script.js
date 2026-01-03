@@ -6,56 +6,25 @@ let currentTrackId = null;
 let isActionInProgress = false;
 let isDeviceOffline = false;
 let consecutiveFailures = 0;
-let currentState = 'loading'; // 'loading' | 'offline' | 'player'
-let stateChangeTimeout = null;
 
 // UI Elements
 const els = {
-    get container() { return document.querySelector('.app-container'); },
-    get player() { return document.getElementById('player-view'); },
-    get loading() { return document.getElementById('loading-state'); },
-    get offline() { return document.getElementById('offline-state'); },
-    get art() { return document.getElementById('track-art'); },
-    get title() { return document.getElementById('track-name'); },
-    get artist() { return document.getElementById('artist-name'); },
-    get progressFill() { return document.getElementById('progress-fill'); },
-    get currTime() { return document.getElementById('current-time'); },
-    get totTime() { return document.getElementById('total-time'); },
-    get playIcon() { return document.getElementById('icon-play'); },
-    get pauseIcon() { return document.getElementById('icon-pause'); },
-    get likeBtn() { return document.getElementById('btn-like'); },
-    get shuffleBtn() { return document.getElementById('btn-shuffle'); },
-    get queueList() { return document.getElementById('queue-list'); },
-    progressBar: null
+    player: document.getElementById("player-view"),
+    loading: document.getElementById("loading-state"),
+    offline: document.getElementById("offline-state"),
+    art: document.getElementById("track-art"),
+    title: document.getElementById("track-name"),
+    artist: document.getElementById("artist-name"),
+    progressFill: document.getElementById("progress-fill"),
+    progressBar: null,
+    currTime: document.getElementById("current-time"),
+    totTime: document.getElementById("total-time"),
+    playIcon: document.getElementById("icon-play"),
+    pauseIcon: document.getElementById("icon-pause"),
+    likeBtn: document.getElementById("btn-like"),
+    shuffleBtn: document.getElementById("btn-shuffle"),
+    queueList: document.getElementById("queue-list")
 };
-
-// Centralized state switching with debounce - ensures only ONE state is visible
-function switchState(newState) {
-    // Cancel any pending state change
-    if (stateChangeTimeout) {
-        clearTimeout(stateChangeTimeout);
-    }
-
-    // Debounce state changes to prevent race conditions
-    stateChangeTimeout = setTimeout(() => {
-        // Single DOM operation - change data-state attribute on container
-        const container = els.container;
-        if (container) {
-            container.setAttribute('data-state', newState);
-        }
-
-        currentState = newState;
-        isDeviceOffline = (newState === 'offline');
-
-        if (newState === 'offline') {
-            disableAllControls();
-        } else if (newState === 'player') {
-            enableAllControls();
-        }
-
-        stateChangeTimeout = null;
-    }, 50); // 50ms debounce
-}
 
 async function fetchState() {
     try {
@@ -68,8 +37,7 @@ async function fetchState() {
 
         const data = await res.json();
 
-        // No active playback - show offline
-        if (!data.is_playing && data.message) {
+        if (!data.is_playing && data.message === "No active playback") {
             showOfflineState();
             return;
         }
@@ -77,11 +45,13 @@ async function fetchState() {
         // Validate required data fields - if missing, show offline
         if (!data.track || !data.track_id || !data.progress) {
             showOfflineState();
+            isDeviceOffline = true;
             return;
         }
 
         // Success - reset failure counter and show player
         consecutiveFailures = 0;
+        isDeviceOffline = false;
         updateUI(data);
         el_showPlayer();
 
@@ -98,21 +68,29 @@ function handleFetchError(status) {
 
     if (status === 401) {
         showToast('Authentication failed', 'error');
-        switchState('offline');
+        showOfflineState();
+        isDeviceOffline = true;
     } else if (status === 404 || status === 403) {
         // Device offline or not available - show immediately
-        switchState('offline');
+        showOfflineState();
+        isDeviceOffline = true;
     } else if (status >= 500 || status === null) {
         showToast('Connection error, retrying...', 'error');
     }
 }
 
 function showOfflineState() {
-    switchState('offline');
+    els.offline.classList.remove("hidden");
+    els.player.classList.add("hidden");
+    els.loading.classList.add("hidden");
+    disableAllControls();
 }
 
 function el_showPlayer() {
-    switchState('player');
+    els.loading.classList.add("hidden");
+    els.offline.classList.add("hidden");
+    els.player.classList.remove("hidden");
+    enableAllControls();
 }
 
 function disableAllControls() {

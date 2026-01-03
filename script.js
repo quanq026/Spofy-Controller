@@ -42,6 +42,13 @@ async function fetchState() {
             return;
         }
 
+        // Validate required data fields - if missing, show offline
+        if (!data.track || !data.track_id || !data.progress) {
+            showOfflineState();
+            isDeviceOffline = true;
+            return;
+        }
+
         // Success - reset failure counter and show player
         consecutiveFailures = 0;
         isDeviceOffline = false;
@@ -64,11 +71,9 @@ function handleFetchError(status) {
         showOfflineState();
         isDeviceOffline = true;
     } else if (status === 404 || status === 403) {
-        // Device offline or not available
-        if (consecutiveFailures >= 2 && !isDeviceOffline) {
-            showOfflineState();
-            isDeviceOffline = true;
-        }
+        // Device offline or not available - show immediately
+        showOfflineState();
+        isDeviceOffline = true;
     } else if (status >= 500 || status === null) {
         showToast('Connection error, retrying...', 'error');
     }

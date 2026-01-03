@@ -6,25 +6,56 @@ let currentTrackId = null;
 let isActionInProgress = false;
 let isDeviceOffline = false;
 let consecutiveFailures = 0;
+let currentState = 'loading'; // 'loading' | 'offline' | 'player'
 
-// UI Elements
-const els = {
-    player: document.getElementById("player-view"),
-    loading: document.getElementById("loading-state"),
-    offline: document.getElementById("offline-state"),
-    art: document.getElementById("track-art"),
-    title: document.getElementById("track-name"),
-    artist: document.getElementById("artist-name"),
-    progressFill: document.getElementById("progress-fill"),
-    progressBar: null,
-    currTime: document.getElementById("current-time"),
-    totTime: document.getElementById("total-time"),
-    playIcon: document.getElementById("icon-play"),
-    pauseIcon: document.getElementById("icon-pause"),
-    likeBtn: document.getElementById("btn-like"),
-    shuffleBtn: document.getElementById("btn-shuffle"),
-    queueList: document.getElementById("queue-list")
-};
+// UI Elements - refresh references to ensure they're valid
+function getEls() {
+    return {
+        player: document.getElementById("player-view"),
+        loading: document.getElementById("loading-state"),
+        offline: document.getElementById("offline-state"),
+        art: document.getElementById("track-art"),
+        title: document.getElementById("track-name"),
+        artist: document.getElementById("artist-name"),
+        progressFill: document.getElementById("progress-fill"),
+        progressBar: null,
+        currTime: document.getElementById("current-time"),
+        totTime: document.getElementById("total-time"),
+        playIcon: document.getElementById("icon-play"),
+        pauseIcon: document.getElementById("icon-pause"),
+        likeBtn: document.getElementById("btn-like"),
+        shuffleBtn: document.getElementById("btn-shuffle"),
+        queueList: document.getElementById("queue-list")
+    };
+}
+
+let els = getEls();
+
+// Centralized state switching - ensures only ONE state is visible
+function switchState(newState) {
+    // Always refresh element references to avoid stale refs
+    els = getEls();
+
+    // Hide ALL states first - force hide regardless of current state
+    els.loading.classList.add("hidden");
+    els.offline.classList.add("hidden");
+    els.player.classList.add("hidden");
+
+    // Show only the target state
+    if (newState === 'loading') {
+        els.loading.classList.remove("hidden");
+    } else if (newState === 'offline') {
+        els.offline.classList.remove("hidden");
+        isDeviceOffline = true;
+        disableAllControls();
+    } else if (newState === 'player') {
+        els.player.classList.remove("hidden");
+        isDeviceOffline = false;
+        enableAllControls();
+    }
+
+    currentState = newState;
+}
 
 async function fetchState() {
     try {
@@ -67,33 +98,21 @@ function handleFetchError(status) {
 
     if (status === 401) {
         showToast('Authentication failed', 'error');
-        showOfflineState();
-        isDeviceOffline = true;
+        switchState('offline');
     } else if (status === 404 || status === 403) {
         // Device offline or not available - show immediately
-        showOfflineState();
-        isDeviceOffline = true;
+        switchState('offline');
     } else if (status >= 500 || status === null) {
         showToast('Connection error, retrying...', 'error');
     }
 }
 
 function showOfflineState() {
-    // Ensure only offline state is visible
-    els.offline.classList.remove("hidden");
-    els.player.classList.add("hidden");
-    els.loading.classList.add("hidden");
-    isDeviceOffline = true;
-    disableAllControls();
+    switchState('offline');
 }
 
 function el_showPlayer() {
-    // Ensure only player is visible
-    els.loading.classList.add("hidden");
-    els.offline.classList.add("hidden");
-    els.player.classList.remove("hidden");
-    isDeviceOffline = false;
-    enableAllControls();
+    switchState('player');
 }
 
 function disableAllControls() {

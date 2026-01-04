@@ -79,18 +79,26 @@ function handleFetchError(status) {
     }
 }
 
+const appContainer = document.querySelector('.app-container');
+
+function setAppState(state) {
+    if (!appContainer) return;
+    appContainer.setAttribute('data-state', state);
+    
+    // Manage controls based on state
+    if (state === 'player') {
+        enableAllControls();
+    } else {
+        disableAllControls();
+    }
+}
+
 function showOfflineState() {
-    els.offline.classList.remove("hidden");
-    els.player.classList.add("hidden");
-    els.loading.classList.add("hidden");
-    disableAllControls();
+    setAppState('offline');
 }
 
 function el_showPlayer() {
-    els.loading.classList.add("hidden");
-    els.offline.classList.add("hidden");
-    els.player.classList.remove("hidden");
-    enableAllControls();
+    setAppState('player');
 }
 
 function disableAllControls() {

@@ -319,10 +319,7 @@ function togglePlayIcon(playing) {
     }
 }
 
-function el_showPlayer() {
-    els.loading.classList.add("hidden");
-    els.player.classList.remove("hidden");
-}
+
 
 function showToast(message, type = 'info') {
     const existingToast = document.querySelector('.toast');

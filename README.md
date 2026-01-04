@@ -73,7 +73,7 @@ APP_API_KEY=your_api_key
 ### 4. Configure Spotify Dashboard
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Select your app -> Settings
-3. Add `http://127.0.0.1:8000/callback` to **Redirect URIs**
+3. Add `https://spotifyesp32.vercel.app/api/spotify/callback` to **Redirect URIs**
 4. Save
 
 ### 5. Run and Setup

@@ -33,7 +33,7 @@ GITHUB_GIST_ID = os.getenv("GITHUB_GIST_ID", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
 GIST_FILENAME = os.getenv("GIST_FILENAME", "")
 APP_API_KEY = os.getenv("APP_API_KEY", "")
-REDIRECT_URI = "http://127.0.0.1:8000/callback"
+REDIRECT_URI = "https://spotifyesp32.vercel.app/api/spotify/callback"
 
 # ======================
 # SECURITY

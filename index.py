@@ -33,7 +33,8 @@ GITHUB_GIST_ID = os.getenv("GITHUB_GIST_ID", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
 GIST_FILENAME = os.getenv("GIST_FILENAME", "")
 APP_API_KEY = os.getenv("APP_API_KEY", "")
-REDIRECT_URI = "https://spotifyesp32.vercel.app/api/spotify/callback"
+# Default to localhost for dev, but allow override via Env Var (e.g. for Vercel)
+REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8000/api/spotify/callback")
 
 # ======================
 # SECURITY
@@ -591,7 +592,7 @@ def login():
     )
     return RedirectResponse(auth_url)
 
-@app.get("/callback")
+@app.get("/api/spotify/callback")
 def callback(code: str):
     """Exchange code for tokens and save to Gist"""
     url = "https://accounts.spotify.com/api/token"

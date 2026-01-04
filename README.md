@@ -73,15 +73,22 @@ APP_API_KEY=your_api_key
 ### 4. Configure Spotify Dashboard
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Select your app -> Settings
-3. Add `https://spotifyesp32.vercel.app/api/spotify/callback` to **Redirect URIs**
+3. Add **Redirect URIs**:
+   - `http://127.0.0.1:8000/api/spotify/callback` (For Local)
+   - `https://YOUR_VERCEL_APP_DOMAIN/api/spotify/callback` (For Vercel - Replace with your actual domain)
 4. Save
+
+### 5. Deployment Config (Vercel)
+When deploying to Vercel, add a new Environment Variable:
+- **Key**: `SPOTIFY_REDIRECT_URI`
+- **Value**: `https://YOUR_VERCEL_APP_DOMAIN/api/spotify/callback`
 
 ### 5. Run and Setup
 1. Run the server:
    ```bash
    uvicorn index:app --reload --host 0.0.0.0 --port 8000
    ```
-2. Go to `http://localhost:8000/login` in your browser
+2. Go to `http://127.0.0.1:8000/login` in your browser
 3. Log in to Spotify and Authorize
 4. You will be redirected to a success page. Done!
 ```bash

@@ -83,7 +83,7 @@ When deploying to Vercel, add a new Environment Variable:
 - **Key**: `SPOTIFY_REDIRECT_URI`
 - **Value**: `https://YOUR_VERCEL_APP_DOMAIN/api/spotify/callback`
 
-### 5. Run and Setup
+### 6. Run and Setup
 1. Run the server:
    ```bash
    uvicorn index:app --reload --host 0.0.0.0 --port 8000
@@ -199,16 +199,6 @@ See [API Endpoints](#api-endpoints) for complete documentation.
 - Queue updates when track changes or on polling intervals
 - Try refreshing the page
 
-## License
-
-MIT
-
-## Support
-
-For issues or questions, please check:
-- [Spotify Web API Documentation](https://developer.spotify.com/documentation/web-api)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-
 ## Environment Variables Reference
 
 | Variable | Required | Description |
@@ -219,3 +209,4 @@ For issues or questions, please check:
 | GITHUB_TOKEN | Yes | GitHub Personal Access Token |
 | GIST_FILENAME | Yes | Filename in gist (e.g., tokens.json) |
 | APP_API_KEY | No | Optional API key for endpoint protection |
+| SPOTIFY_REDIRECT_URI | No | Custom redirect URI (Default: localhost) |

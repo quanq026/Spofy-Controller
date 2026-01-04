@@ -25,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # ======================
-# CONFIG
+# CONFIGURATION
 # ======================
 CLIENT_ID = os.getenv("CLIENT_ID", "")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET", "")
@@ -40,7 +40,7 @@ REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8000/api/spot
 # SECURITY
 # ======================
 async def verify_api_key(x_api_key: str = Header(None)):
-    """Validates the API Key via Header (X-API-Key)."""
+    """Verifies the API Key from the X-API-Key header."""
     if not APP_API_KEY:
         return
 
@@ -55,7 +55,7 @@ async def verify_api_key(x_api_key: str = Header(None)):
 
 
 def load_token_from_gist() -> dict:
-    """Đọc token từ GitHub Gist"""
+    """Loads tokens from GitHub Gist."""
     if not GITHUB_GIST_ID or not GITHUB_TOKEN:
         return {"access_token": "", "refresh_token": "", "expires_at": 0}
 
@@ -72,7 +72,7 @@ def load_token_from_gist() -> dict:
     return {"access_token": "", "refresh_token": "", "expires_at": 0}
 
 def save_token_to_gist(access_token: str, refresh_token: str, expires_at: float):
-    """Lưu token vào GitHub Gist"""
+    """Saves tokens to GitHub Gist."""
     if not GITHUB_GIST_ID or not GITHUB_TOKEN:
         print("[WARN] Gist not configured")
         return False
@@ -110,7 +110,7 @@ def save_token_to_gist(access_token: str, refresh_token: str, expires_at: float)
 # TOKEN HANDLING
 # ======================
 def renew_access_token(refresh_token: str):
-    """Làm mới access token"""
+    """Renews the access token using the refresh token."""
     url = "https://accounts.spotify.com/api/token"
     auth_header = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
     headers = {
@@ -134,7 +134,7 @@ def renew_access_token(refresh_token: str):
         return None
 
 def get_valid_token() -> str:
-    """Đọc token từ Gist, tự renew nếu gần hết hạn"""
+    """Retrieves a valid access token, renewing it if necessary."""
     cached = load_token_from_gist()
     access_token = cached.get("access_token", "")
     refresh_token = cached.get("refresh_token", "")
@@ -146,7 +146,7 @@ def get_valid_token() -> str:
     if not refresh_token:
         raise HTTPException(status_code=400, detail="No refresh_token in Gist")
 
-    # Renew if expired or near expiry (< 5 min)
+    # Renew if expired or expiring soon (< 5 minutes)
     if time.time() >= expires_at - 300:
         print(f"[DEBUG] Token expires in {int(expires_at - time.time())}s, renewing...")
         token_data = renew_access_token(refresh_token)
@@ -161,12 +161,12 @@ def get_valid_token() -> str:
 # SPOTIFY API HELPERS
 # ======================
 def spotify_request(method, endpoint, access_token, **kwargs):
-    """Helper gửi request Spotify với retry logic"""
+    """Helper to send Spotify requests with retry logic."""
     url = f"https://api.spotify.com/v1{endpoint}"
     headers = {"Authorization": f"Bearer {access_token}"}
     res = requests.request(method, url, headers=headers, timeout=10, **kwargs)
     
-    # Retry nếu 401 (token expired)
+    # Retry if token is expired (401 Unauthorized)
     if res.status_code == 401:
         print("[DEBUG] Got 401, retrying with fresh token...")
         cached = load_token_from_gist()
@@ -178,7 +178,7 @@ def spotify_request(method, endpoint, access_token, **kwargs):
     return res
 
 def handle_spotify_error(res):
-    """Logs detailed error and raises sanitized HTTPException"""
+    """Logs detailed errors and raises sanitized HTTP exceptions."""
     if res.status_code in [200, 204]:
         return
     
@@ -197,13 +197,13 @@ def handle_spotify_error(res):
     raise HTTPException(status_code=res.status_code, detail=detail)
 
 def parse_time(ms: int):
-    """Format ms -> mm:ss"""
+    """Formats milliseconds to mm:ss."""
     minutes = int(ms / 60000)
     seconds = int((ms % 60000) / 1000)
     return f"{minutes:02}:{seconds:02}"
 
 def parse_track_data(data: dict):
-    """Parse playback state thành JSON response"""
+    """Parses raw playback data into a simplified JSON response."""
     if not data or not data.get("item"):
         return {"is_playing": False, "message": "No active playback"}
 
@@ -234,14 +234,25 @@ def parse_track_data(data: dict):
     }
 
 # ======================
-# ROUTES
+# API ROUTES
 # ======================
 # ======================
-# STATIC SERVING (UI)
+# STATIC ASSETS (UI)
 # ======================
 
 @app.get("/")
 def serve_ui():
+    # Check if we have valid tokens in Gist
+    try:
+        cached = load_token_from_gist()
+        # If Gist is empty, malformed, or missing critical keys -> Redirect to Login
+        if not cached or not cached.get("access_token") or not cached.get("refresh_token"):
+             # If completely empty, try redirecting
+             return RedirectResponse("/login")
+    except Exception:
+        # If unreadable -> Redirect to Login
+        return RedirectResponse("/login")
+
     return FileResponse("index.html")
 
 @app.get("/style.css")
@@ -254,7 +265,7 @@ def serve_js():
 
 @app.get("/current")
 def current(auth: str = Depends(verify_api_key)):
-    """Lấy trạng thái playback hiện tại, kèm thông tin liked"""
+    """Retrieves the current playback state and 'liked' status."""
     access_token = get_valid_token()
     res = spotify_request("GET", "/me/player", access_token)
 
@@ -262,7 +273,7 @@ def current(auth: str = Depends(verify_api_key)):
         data = res.json()
         parsed = parse_track_data(data)
 
-        # Kiểm tra bài này có nằm trong "Liked Songs" không
+        # Check if the current track is in the user's "Liked Songs"
         track_id = parsed.get("track_id")
         if track_id:
             like_res = spotify_request("GET", f"/me/tracks/contains?ids={track_id}", access_token)
@@ -281,7 +292,7 @@ def current(auth: str = Depends(verify_api_key)):
 
 @app.get("/play")
 def play(auth: str = Depends(verify_api_key)):
-    """Resume playback"""
+    """Resumes playback."""
     access_token = get_valid_token()
     res = spotify_request("PUT", "/me/player/play", access_token)
     
@@ -291,7 +302,7 @@ def play(auth: str = Depends(verify_api_key)):
 
 @app.get("/pause")
 def pause(auth: str = Depends(verify_api_key)):
-    """Pause playback"""
+    """Pauses playback."""
     access_token = get_valid_token()
     res = spotify_request("PUT", "/me/player/pause", access_token)
     
@@ -301,7 +312,7 @@ def pause(auth: str = Depends(verify_api_key)):
 
 @app.get("/next")
 def next_track(auth: str = Depends(verify_api_key)):
-    """Skip to next track"""
+    """Skips to the next track."""
     access_token = get_valid_token()
     res = spotify_request("POST", "/me/player/next", access_token)
     
@@ -311,7 +322,7 @@ def next_track(auth: str = Depends(verify_api_key)):
 
 @app.get("/prev")
 def prev_track(auth: str = Depends(verify_api_key)):
-    """Skip to previous track"""
+    """Skips to the previous track."""
     access_token = get_valid_token()
     res = spotify_request("POST", "/me/player/previous", access_token)
     
@@ -321,7 +332,7 @@ def prev_track(auth: str = Depends(verify_api_key)):
 
 @app.get("/like")
 def like_track(auth: str = Depends(verify_api_key)):
-    """Save current track to library"""
+    """Adds the current track to the user's library."""
     access_token = get_valid_token()
     
     # Get current track
@@ -339,7 +350,7 @@ def like_track(auth: str = Depends(verify_api_key)):
 
 @app.get("/dislike")
 def dislike_track(auth: str = Depends(verify_api_key)):
-    """Remove current track from library"""
+    """Removes the current track from the user's library."""
     access_token = get_valid_token()
     
     # Get current track
@@ -357,7 +368,7 @@ def dislike_track(auth: str = Depends(verify_api_key)):
 
 @app.get("/queue")
 def get_queue(auth: str = Depends(verify_api_key)):
-    """Lấy danh sách bài hát trong hàng chờ"""
+    """Retrieves the current playback queue."""
     access_token = get_valid_token()
     res = spotify_request("GET", "/me/player/queue", access_token)
 
@@ -406,7 +417,7 @@ def get_queue(auth: str = Depends(verify_api_key)):
 
 @app.get("/shuffle/{state}")
 def toggle_shuffle(state: str, auth: str = Depends(verify_api_key)):
-    """Bật hoặc tắt chế độ trộn bài"""
+    """Toggles shuffle mode."""
     access_token = get_valid_token()
     
     if state.lower() not in ["true", "false"]:
@@ -424,7 +435,7 @@ def toggle_shuffle(state: str, auth: str = Depends(verify_api_key)):
 
 @app.get("/queue/{index}")
 def play_from_queue(index: int, auth: str = Depends(verify_api_key)):
-    """Phát bài trong context hiện tại thay vì reset queue"""
+    """Plays a track from the queue within the current context."""
     access_token = get_valid_token()
     player_res = spotify_request("GET", "/me/player", access_token)
     if player_res.status_code != 200:
@@ -448,11 +459,11 @@ def play_from_queue(index: int, auth: str = Depends(verify_api_key)):
     target_track = full_list[index]
     track_id = target_track.get("id")
 
-    # Nếu có context (playlist/album), phát theo context
+    # If context (playlist/album) exists, play within context
     if context_uri:
         body = {"context_uri": context_uri, "offset": {"uri": f"spotify:track:{track_id}"}}
     else:
-        # Nếu không có context
+    # Otherwise, play as a standalone track
         body = {"uris": [f"spotify:track:{track_id}"]}
 
     res = spotify_request("PUT", "/me/player/play", access_token, json=body)
@@ -469,7 +480,7 @@ def play_from_queue(index: int, auth: str = Depends(verify_api_key)):
 
 @app.get("/seek/{percent}")
 def seek_position(percent: int, auth: str = Depends(verify_api_key)):
-    """Seek to a specific position in the track (0-100%)"""
+    """Seeks to a specific position (percentage) in the track."""
     if not (0 <= percent <= 100):
         raise HTTPException(status_code=400, detail="Percent must be between 0 and 100")
 
@@ -498,7 +509,7 @@ def seek_position(percent: int, auth: str = Depends(verify_api_key)):
 
 @app.get("/volume/{level}")
 def set_volume(level: int, auth: str = Depends(verify_api_key)):
-    """Điều chỉnh âm lượng (0–100%)"""
+    """Sets the playback volume (0-100)."""
     if not (0 <= level <= 100):
         raise HTTPException(status_code=400, detail="Volume must be between 0 and 100")
 
@@ -515,7 +526,7 @@ def set_volume(level: int, auth: str = Depends(verify_api_key)):
 
 @app.get("/force-renew")
 def force_renew(auth: str = Depends(verify_api_key)):
-    """Force renew token"""
+    """Forces a token renewal."""
     cached = load_token_from_gist()
     refresh_token = cached.get("refresh_token", "")
     if not refresh_token:
@@ -530,7 +541,7 @@ def force_renew(auth: str = Depends(verify_api_key)):
 
 @app.get("/debug")
 def debug():
-    """Debug token status"""
+    """Debugs the current token status."""
     cached = load_token_from_gist()
     expires_at = cached.get("expires_at", 0)
     expires_in = int(expires_at - time.time())
@@ -546,7 +557,7 @@ def debug():
 
 @app.get("/gettoken")
 def get_token():
-    """Trả về access_token hợp lệ."""
+    """Returns a valid access token."""
     try:
         access_token = get_valid_token()
         return {
@@ -558,7 +569,7 @@ def get_token():
 
 @app.post("/init")
 async def init_tokens(request: dict, auth: str = Depends(verify_api_key)):
-    """Initialize Gist with tokens"""
+    """Initializes the Gist with provided tokens."""
     access_token = request.get("access_token", "")
     refresh_token = request.get("refresh_token", "")
     
@@ -579,7 +590,7 @@ async def init_tokens(request: dict, auth: str = Depends(verify_api_key)):
 # ======================
 @app.get("/login")
 def login():
-    """Redirect user to Spotify for authentication"""
+    """Redirects the user to Spotify for authentication."""
     if not CLIENT_ID:
         return {"error": "CLIENT_ID not configured"}
         
@@ -594,7 +605,7 @@ def login():
 
 @app.get("/api/spotify/callback")
 def callback(code: str):
-    """Exchange code for tokens and save to Gist"""
+    """Exchanges the authorization code for tokens and saves them to Gist."""
     url = "https://accounts.spotify.com/api/token"
     auth_header = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
     headers = {

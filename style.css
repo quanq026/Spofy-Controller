@@ -58,15 +58,27 @@ body {
 
 .state-view {
     flex: 1;
-    display: flex;
+    display: none; /* Changed from flex to none by default */
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
     width: 100%;
     opacity: 1;
-    transition: opacity 0.3s;
     gap: 16px;
     overflow: hidden;
+}
+
+/* State-based visibility */
+.app-container[data-state="loading"] #loading-state,
+.app-container[data-state="offline"] #offline-state,
+.app-container[data-state="player"] #player-view {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .hidden {

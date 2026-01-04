@@ -10,11 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231DB954' width='180' height='180'/><circle cx='50' cy='60' r='15' fill='white'/><circle cx='130' cy='80' r='20' fill='white'/><circle cx='60' cy='130' r='18' fill='white'/></svg>">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 
 <body>
-    <div class="app-container">
+    <div class="app-container" data-state="loading">
         <div id="loading-state" class="state-view">
             <div class="player-section">
                 <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;">
@@ -44,7 +44,7 @@
             </div>
         </div>
 
-        <div id="offline-state" class="state-view hidden">
+        <div id="offline-state" class="state-view">
             <div class="offline-container">
                 <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <path d="M20 21H4M9 9h6m-6 4h6m-10-7a9 9 0 1 1 18 0" />
@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        <div id="player-view" class="state-view hidden">
+        <div id="player-view" class="state-view">
             <div class="player-section">
                 <header>
                     <div class="status-badge" id="device-name">Web Player</div>
@@ -127,7 +127,7 @@
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 </body>
 
 </html>

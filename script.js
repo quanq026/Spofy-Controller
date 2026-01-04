@@ -81,10 +81,16 @@ function handleFetchError(status) {
 
 const appContainer = document.querySelector('.app-container');
 
+// Force initial state if missing (handles stale HTML + New JS case)
+if (appContainer && !appContainer.hasAttribute('data-state')) {
+    console.log("Forcing initial loading state");
+    appContainer.setAttribute('data-state', 'loading');
+}
+
 function setAppState(state) {
     if (!appContainer) return;
     appContainer.setAttribute('data-state', state);
-    
+
     // Manage controls based on state
     if (state === 'player') {
         enableAllControls();

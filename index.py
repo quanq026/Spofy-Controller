@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException, Header, Security, Depends
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse, HTMLResponse
 from typing import Optional
+from urllib.parse import quote
 import requests
 import os, json, time, base64
 
@@ -32,6 +33,7 @@ GITHUB_GIST_ID = os.getenv("GITHUB_GIST_ID", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
 GIST_FILENAME = os.getenv("GIST_FILENAME", "")
 APP_API_KEY = os.getenv("APP_API_KEY", "")
+REDIRECT_URI = "http://127.0.0.1:8000/callback"
 
 # ======================
 # SECURITY
@@ -570,5 +572,63 @@ async def init_tokens(request: dict, auth: str = Depends(verify_api_key)):
         if success
         else {"success": False, "message": "Failed to save to Gist"}
     )
+
+# ======================
+# OAUTH FLOW
+# ======================
+@app.get("/login")
+def login():
+    """Redirect user to Spotify for authentication"""
+    if not CLIENT_ID:
+        return {"error": "CLIENT_ID not configured"}
+        
+    scopes = "user-read-playback-state user-modify-playback-state user-read-currently-playing user-library-read user-library-modify"
+    auth_url = (
+        f"https://accounts.spotify.com/authorize?response_type=code"
+        f"&client_id={CLIENT_ID}"
+        f"&scope={quote(scopes)}"
+        f"&redirect_uri={quote(REDIRECT_URI)}"
+    )
+    return RedirectResponse(auth_url)
+
+@app.get("/callback")
+def callback(code: str):
+    """Exchange code for tokens and save to Gist"""
+    url = "https://accounts.spotify.com/api/token"
+    auth_header = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
+    headers = {
+        "Authorization": f"Basic {auth_header}",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    data = {
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": REDIRECT_URI,
+    }
+
+    res = requests.post(url, headers=headers, data=data, timeout=10)
+    
+    if res.status_code == 200:
+        token_data = res.json()
+        access_token = token_data["access_token"]
+        refresh_token = token_data["refresh_token"]
+        expires_at = time.time() + token_data.get("expires_in", 3600)
+        
+        success = save_token_to_gist(access_token, refresh_token, expires_at)
+        
+        if success:
+             return HTMLResponse("""
+                <html>
+                    <body style='background:#121212; color:#fff; font-family:sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh;'>
+                        <h2 style='color:#1ed760'>Setup Complete!</h2>
+                        <p>Tokens have been saved to Gist.</p>
+                        <a href='/' style='color:#fff; text-decoration:underline;'>Go to Player</a>
+                    </body>
+                </html>
+            """)
+        else:
+            return {"error": "Failed to save tokens to Gist"}
+    else:
+        return {"error": "Failed to exchange code", "details": res.json()}
 
 app = app

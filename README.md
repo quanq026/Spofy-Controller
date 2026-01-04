@@ -70,19 +70,20 @@ GIST_FILENAME=tokens.json
 APP_API_KEY=your_api_key
 ```
 
-#### How to get Spotify credentials:
+### 4. Configure Spotify Dashboard
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-2. Create a new app
-3. Accept terms and create
-4. Copy `Client ID` and `Client Secret`
+2. Select your app -> Settings
+3. Add `http://127.0.0.1:8000/callback` to **Redirect URIs**
+4. Save
 
-#### How to set up GitHub Gist for token storage:
-1. Create a GitHub Gist (can be private)
-2. Get the Gist ID from the URL: `https://gist.github.com/username/{GIST_ID}`
-3. Create a GitHub Personal Access Token with `gist` scope
-4. Create initial `tokens.json` file in your Gist
-
-### 4. Run the server
+### 5. Run and Setup
+1. Run the server:
+   ```bash
+   uvicorn index:app --reload --host 0.0.0.0 --port 8000
+   ```
+2. Go to `http://localhost:8000/login` in your browser
+3. Log in to Spotify and Authorize
+4. You will be redirected to a success page. Done!
 ```bash
 uvicorn index:app --reload --host 0.0.0.0 --port 8000
 ```

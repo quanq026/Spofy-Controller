@@ -387,6 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputs = {
         clientId: document.getElementById('env-client-id'),
         clientSecret: document.getElementById('env-client-secret'),
+        redirectUri: document.getElementById('env-redirect-uri'),
         gistId: document.getElementById('env-gist-id'),
         githubToken: document.getElementById('env-github-token'),
         gistFilename: document.getElementById('env-gist-filename')
@@ -396,6 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadSettings() {
         inputs.clientId.value = localStorage.getItem('env_CLIENT_ID') || '';
         inputs.clientSecret.value = localStorage.getItem('env_CLIENT_SECRET') || '';
+        inputs.redirectUri.value = localStorage.getItem('env_REDIRECT_URI') || '';
         inputs.gistId.value = localStorage.getItem('env_GITHUB_GIST_ID') || '';
         inputs.githubToken.value = localStorage.getItem('env_GITHUB_TOKEN') || '';
         inputs.gistFilename.value = localStorage.getItem('env_GIST_FILENAME') || '';
@@ -413,6 +415,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         localStorage.setItem('env_CLIENT_SECRET', inputs.clientSecret.value);
         setCookie('CLIENT_SECRET', inputs.clientSecret.value);
+
+        localStorage.setItem('env_REDIRECT_URI', inputs.redirectUri.value);
+        setCookie('SPOTIFY_REDIRECT_URI', inputs.redirectUri.value);
 
         localStorage.setItem('env_GITHUB_GIST_ID', inputs.gistId.value);
         setCookie('GITHUB_GIST_ID', inputs.gistId.value);

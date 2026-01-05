@@ -618,11 +618,17 @@ def login(request: Request, settings: dict = Depends(get_settings)):
     """Redirects the user to Spotify for authentication."""
     client_id = settings["CLIENT_ID"]
     
-    # Auto-detect Redirect URI
-    redirect_uri = str(request.url_for("callback"))
-    # If running on https (e.g. Vercel), ensure scheme is https
-    if request.headers.get("x-forwarded-proto") == "https":
-         redirect_uri = redirect_uri.replace("http://", "https://")
+    # Use configured redirect URI if available, else auto-detect
+    redirect_uri = settings.get("REDIRECT_URI")
+    if not redirect_uri or "localhost" in redirect_uri and "vercel.app" in str(request.url):
+         # If we are on vercel but config says localhost (default fallback), ignore it and auto-detect
+         redirect_uri = ""
+
+    if not redirect_uri:
+        redirect_uri = str(request.url_for("callback"))
+        if request.headers.get("x-forwarded-proto") == "https":
+             redirect_uri = redirect_uri.replace("http://", "https://") 
+
 
     if not client_id:
         return {"error": "CLIENT_ID not configured"}
@@ -642,10 +648,15 @@ def callback(request: Request, code: str, settings: dict = Depends(get_settings)
     client_id = settings["CLIENT_ID"]
     client_secret = settings["CLIENT_SECRET"]
     
-    # Auto-detect Redirect URI matching login
-    redirect_uri = str(request.url_for("callback"))
-    if request.headers.get("x-forwarded-proto") == "https":
-         redirect_uri = redirect_uri.replace("http://", "https://")
+    # Use configured redirect URI if available, else auto-detect
+    redirect_uri = settings.get("REDIRECT_URI")
+    if not redirect_uri or "localhost" in redirect_uri and "vercel.app" in str(request.url):
+         redirect_uri = ""
+
+    if not redirect_uri:
+        redirect_uri = str(request.url_for("callback"))
+        if request.headers.get("x-forwarded-proto") == "https":
+             redirect_uri = redirect_uri.replace("http://", "https://")
 
     url = "https://accounts.spotify.com/api/token"
     auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()

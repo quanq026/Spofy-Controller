@@ -139,7 +139,7 @@
             </div>
         </div>
     </div>
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 
     <!-- Settings Modal -->
     <div id="settings-modal" class="modal-overlay hidden">
@@ -162,6 +162,11 @@
                 <div class="form-group">
                     <label for="env-client-secret">Spotify Client Secret</label>
                     <input type="password" id="env-client-secret" placeholder="Client Secret">
+                </div>
+                <!-- Optional: Manual Override -->
+                <div class="form-group">
+                    <label for="env-redirect-uri">Redirect URI (Optional)</label>
+                    <input type="text" id="env-redirect-uri" placeholder="Leave empty to auto-detect">
                 </div>
 
                 <hr class="modal-divider">

@@ -379,6 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ======================
     const modal = document.getElementById('settings-modal');
     const btnSettings = document.getElementById('btn-settings');
+    const btnOfflineSettings = document.getElementById('btn-offline-settings');
     const btnCloseSettings = document.getElementById('btn-close-settings');
     const btnSaveSettings = document.getElementById('btn-save-settings');
 
@@ -431,6 +432,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnSettings) {
         btnSettings.addEventListener('click', () => {
+            loadSettings();
+            modal.classList.remove('hidden');
+        });
+    }
+
+    if (btnOfflineSettings) {
+        btnOfflineSettings.addEventListener('click', () => {
             loadSettings();
             modal.classList.remove('hidden');
         });

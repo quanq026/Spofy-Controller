@@ -386,22 +386,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputs = {
         clientId: document.getElementById('env-client-id'),
         clientSecret: document.getElementById('env-client-secret'),
-        redirectUri: document.getElementById('env-redirect-uri'),
         gistId: document.getElementById('env-gist-id'),
         githubToken: document.getElementById('env-github-token'),
-        gistFilename: document.getElementById('env-gist-filename'),
-        apiKey: document.getElementById('env-api-key')
+        gistFilename: document.getElementById('env-gist-filename')
     };
 
     // Load from LocalStorage
     function loadSettings() {
         inputs.clientId.value = localStorage.getItem('env_CLIENT_ID') || '';
         inputs.clientSecret.value = localStorage.getItem('env_CLIENT_SECRET') || '';
-        inputs.redirectUri.value = localStorage.getItem('env_REDIRECT_URI') || '';
         inputs.gistId.value = localStorage.getItem('env_GITHUB_GIST_ID') || '';
         inputs.githubToken.value = localStorage.getItem('env_GITHUB_TOKEN') || '';
         inputs.gistFilename.value = localStorage.getItem('env_GIST_FILENAME') || '';
-        inputs.apiKey.value = localStorage.getItem('env_APP_API_KEY') || '';
     }
 
     // Save to LocalStorage & Cookies
@@ -417,9 +413,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('env_CLIENT_SECRET', inputs.clientSecret.value);
         setCookie('CLIENT_SECRET', inputs.clientSecret.value);
 
-        localStorage.setItem('env_REDIRECT_URI', inputs.redirectUri.value);
-        setCookie('SPOTIFY_REDIRECT_URI', inputs.redirectUri.value);
-
         localStorage.setItem('env_GITHUB_GIST_ID', inputs.gistId.value);
         setCookie('GITHUB_GIST_ID', inputs.gistId.value);
 
@@ -428,9 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         localStorage.setItem('env_GIST_FILENAME', inputs.gistFilename.value);
         setCookie('GIST_FILENAME', inputs.gistFilename.value);
-
-        localStorage.setItem('env_APP_API_KEY', inputs.apiKey.value);
-        setCookie('APP_API_KEY', inputs.apiKey.value);
     }
 
     function saveSettingsAndReload() {

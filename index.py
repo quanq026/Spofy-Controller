@@ -614,10 +614,15 @@ async def init_tokens(request: dict, settings: dict = Depends(get_settings), aut
 # OAUTH FLOW
 # ======================
 @app.get("/login")
-def login(settings: dict = Depends(get_settings)):
+def login(request: Request, settings: dict = Depends(get_settings)):
     """Redirects the user to Spotify for authentication."""
     client_id = settings["CLIENT_ID"]
-    redirect_uri = settings["REDIRECT_URI"]
+    
+    # Auto-detect Redirect URI
+    redirect_uri = str(request.url_for("callback"))
+    # If running on https (e.g. Vercel), ensure scheme is https
+    if request.headers.get("x-forwarded-proto") == "https":
+         redirect_uri = redirect_uri.replace("http://", "https://")
 
     if not client_id:
         return {"error": "CLIENT_ID not configured"}
@@ -632,11 +637,15 @@ def login(settings: dict = Depends(get_settings)):
     return RedirectResponse(auth_url)
 
 @app.get("/api/spotify/callback")
-def callback(code: str, settings: dict = Depends(get_settings)):
+def callback(request: Request, code: str, settings: dict = Depends(get_settings)):
     """Exchanges the authorization code for tokens and saves them to Gist."""
     client_id = settings["CLIENT_ID"]
     client_secret = settings["CLIENT_SECRET"]
-    redirect_uri = settings["REDIRECT_URI"]
+    
+    # Auto-detect Redirect URI matching login
+    redirect_uri = str(request.url_for("callback"))
+    if request.headers.get("x-forwarded-proto") == "https":
+         redirect_uri = redirect_uri.replace("http://", "https://")
 
     url = "https://accounts.spotify.com/api/token"
     auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()

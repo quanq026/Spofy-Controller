@@ -164,10 +164,10 @@ def get_valid_token(settings: dict) -> str:
     if not access_token:
         # Don't error out immediately, maybe they need to login.
         # But for this function's contract, it expects a token.
-        raise HTTPException(status_code=400, detail="No access_token in Gist. Call /init first or check settings")
+        raise HTTPException(status_code=401, detail="No access_token in Gist. Call /init first or check settings")
     
     if not refresh_token:
-        raise HTTPException(status_code=400, detail="No refresh_token in Gist")
+        raise HTTPException(status_code=401, detail="No refresh_token in Gist")
 
     # Renew if expired or expiring soon (< 5 minutes)
     if time.time() >= expires_at - 300:

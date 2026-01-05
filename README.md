@@ -70,19 +70,27 @@ GIST_FILENAME=tokens.json
 APP_API_KEY=your_api_key
 ```
 
-#### How to get Spotify credentials:
+### 4. Configure Spotify Dashboard
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-2. Create a new app
-3. Accept terms and create
-4. Copy `Client ID` and `Client Secret`
+2. Select your app -> Settings
+3. Add **Redirect URIs**:
+   - `http://127.0.0.1:8000/api/spotify/callback` (For Local)
+   - `https://YOUR_VERCEL_APP_DOMAIN/api/spotify/callback` (For Vercel - Replace with your actual domain)
+4. Save
 
-#### How to set up GitHub Gist for token storage:
-1. Create a GitHub Gist (can be private)
-2. Get the Gist ID from the URL: `https://gist.github.com/username/{GIST_ID}`
-3. Create a GitHub Personal Access Token with `gist` scope
-4. Create initial `tokens.json` file in your Gist
+### 5. Deployment Config (Vercel)
+When deploying to Vercel, add a new Environment Variable:
+- **Key**: `SPOTIFY_REDIRECT_URI`
+- **Value**: `https://YOUR_VERCEL_APP_DOMAIN/api/spotify/callback`
 
-### 4. Run the server
+### 6. Run and Setup
+1. Run the server:
+   ```bash
+   uvicorn index:app --reload --host 0.0.0.0 --port 8000
+   ```
+2. Go to `http://127.0.0.1:8000/login` in your browser
+3. Log in to Spotify and Authorize
+4. You will be redirected to a success page. Done!
 ```bash
 uvicorn index:app --reload --host 0.0.0.0 --port 8000
 ```
@@ -191,16 +199,6 @@ See [API Endpoints](#api-endpoints) for complete documentation.
 - Queue updates when track changes or on polling intervals
 - Try refreshing the page
 
-## License
-
-MIT
-
-## Support
-
-For issues or questions, please check:
-- [Spotify Web API Documentation](https://developer.spotify.com/documentation/web-api)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-
 ## Environment Variables Reference
 
 | Variable | Required | Description |
@@ -211,3 +209,4 @@ For issues or questions, please check:
 | GITHUB_TOKEN | Yes | GitHub Personal Access Token |
 | GIST_FILENAME | Yes | Filename in gist (e.g., tokens.json) |
 | APP_API_KEY | No | Optional API key for endpoint protection |
+| SPOTIFY_REDIRECT_URI | No | Custom redirect URI (Default: localhost) |

@@ -7,7 +7,7 @@ let isActionInProgress = false;
 let isDeviceOffline = false;
 let consecutiveFailures = 0;
 
-// UI Elements
+// DOM Elements Reference
 const els = {
     player: document.getElementById("player-view"),
     loading: document.getElementById("loading-state"),
@@ -79,6 +79,7 @@ function handleFetchError(status) {
     }
 }
 
+// Initialize State based on HTML attributes
 const appContainer = document.querySelector('.app-container');
 
 // Force initial state if missing (handles stale HTML + New JS case)
@@ -140,7 +141,7 @@ function updateUI(data) {
     isPlaying = data.is_playing;
     togglePlayIcon(isPlaying);
 
-    // Progress - with safety check for undefined data.progress
+    // Playback Status (Progress, Time, Duration)
     if (data.progress_percent !== undefined) {
         els.progressFill.style.width = data.progress_percent + "%";
     }

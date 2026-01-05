@@ -25,6 +25,9 @@ body {
     overflow: hidden;
 }
 
+/* ======================
+   LAYOUT & CONTAINERS
+   ====================== */
 .app-container {
     width: 100%;
     max-width: 980px;
@@ -58,7 +61,7 @@ body {
 
 .state-view {
     flex: 1;
-    display: none; /* Changed from flex to none by default */
+    display: none;
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
@@ -68,7 +71,9 @@ body {
     overflow: hidden;
 }
 
-/* State-based visibility */
+/* ======================
+   STATE MANAGEMENT
+   ====================== */
 .app-container[data-state="loading"] #loading-state,
 .app-container[data-state="offline"] #offline-state,
 .app-container[data-state="player"] #player-view {
@@ -77,8 +82,13 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .hidden {

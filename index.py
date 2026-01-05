@@ -640,7 +640,24 @@ def login(request: Request, settings: dict = Depends(get_settings)):
         f"&scope={quote(scopes)}"
         f"&redirect_uri={quote(redirect_uri)}"
     )
-    return RedirectResponse(auth_url)
+    
+    # DEBUG: Return visual confirmation instead of redirecting immediately
+    return HTMLResponse(f"""
+    <html>
+        <body style="background:#121212; color:#fff; font-family:sans-serif; padding:40px; display:flex; flex-direction:column; align-items:center;">
+            <h1>Debug Login</h1>
+            <div style="background:#222; padding:20px; border-radius:8px; width:100%; max-width:600px; word-break:break-all;">
+                <p><strong>Detected Client ID:</strong> <span style="color:#1ed760">{client_id}</span></p>
+                <p><strong>Generated Redirect URI:</strong> <span style="color:#1ed760">{redirect_uri}</span></p>
+                <p><strong>Full Auth URL:</strong></p>
+                <code style="display:block; background:#000; padding:10px; margin:10px 0;">{auth_url}</code>
+            </div>
+            <br>
+            <p>Please compare the <strong>Redirect URI</strong> above EXACTLY with your Spotify Dashboard.</p>
+            <a href="{auth_url}" style="background:#1ed760; color:#000; padding:12px 24px; border-radius:30px; text-decoration:none; font-weight:bold; margin-top:20px;">Proceed to Spotify Login</a>
+        </body>
+    </html>
+    """)
 
 @app.get("/api/spotify/callback")
 def callback(request: Request, code: str, settings: dict = Depends(get_settings)):

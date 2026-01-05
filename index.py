@@ -491,7 +491,7 @@ def play_from_queue(index: int, settings: dict = Depends(get_settings), auth: st
     # Otherwise, play as a standalone track
         body = {"uris": [f"spotify:track:{track_id}"]}
 
-    res = spotify_request("PUT", "/me/player/play", access_token, json=body)
+    res = spotify_request("PUT", "/me/player/play", access_token, settings, json=body)
 
     if res.status_code in [204, 200]:
         return {

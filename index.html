@@ -58,7 +58,18 @@
         <div id="player-view" class="state-view">
             <div class="player-section">
                 <header>
-                    <div class="status-badge" id="device-name">Web Player</div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div class="status-badge" id="device-name">Web Player</div>
+                        <button id="btn-settings" class="btn-icon" aria-label="Settings" style="opacity: 0.7;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z">
+                                </path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
                 </header>
 
                 <div class="album-art-container">
@@ -128,6 +139,61 @@
         </div>
     </div>
     <script src="script.js?v=2"></script>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button id="btn-close-settings" class="btn-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Configure environment variables locally. Values are saved in your browser.</p>
+
+                <div class="form-group">
+                    <label for="env-client-id">Spotify Client ID</label>
+                    <input type="text" id="env-client-id" placeholder="Client ID">
+                </div>
+                <div class="form-group">
+                    <label for="env-client-secret">Spotify Client Secret</label>
+                    <input type="password" id="env-client-secret" placeholder="Client Secret">
+                </div>
+                <div class="form-group">
+                    <label for="env-redirect-uri">Redirect URI</label>
+                    <input type="text" id="env-redirect-uri" placeholder="http://localhost:8000/api/spotify/callback">
+                </div>
+
+                <hr class="modal-divider">
+
+                <div class="form-group">
+                    <label for="env-gist-id">GitHub Gist ID</label>
+                    <input type="text" id="env-gist-id" placeholder="Gist ID">
+                </div>
+                <div class="form-group">
+                    <label for="env-github-token">GitHub Token</label>
+                    <input type="password" id="env-github-token" placeholder="ghp_...">
+                </div>
+                <div class="form-group">
+                    <label for="env-gist-filename">Gist Filename</label>
+                    <input type="text" id="env-gist-filename" placeholder="spotify_token.json">
+                </div>
+
+                <hr class="modal-divider">
+
+                <div class="form-group">
+                    <label for="env-api-key">App API Key (Optional)</label>
+                    <input type="password" id="env-api-key" placeholder="Secret Key">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-save-settings" class="btn-primary">Save & Reload</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

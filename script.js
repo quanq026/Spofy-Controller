@@ -373,6 +373,95 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // ======================
+    // SETTINGS MODAL LOGIC
+    // ======================
+    const modal = document.getElementById('settings-modal');
+    const btnSettings = document.getElementById('btn-settings');
+    const btnCloseSettings = document.getElementById('btn-close-settings');
+    const btnSaveSettings = document.getElementById('btn-save-settings');
+
+    // Inputs
+    const inputs = {
+        clientId: document.getElementById('env-client-id'),
+        clientSecret: document.getElementById('env-client-secret'),
+        redirectUri: document.getElementById('env-redirect-uri'),
+        gistId: document.getElementById('env-gist-id'),
+        githubToken: document.getElementById('env-github-token'),
+        gistFilename: document.getElementById('env-gist-filename'),
+        apiKey: document.getElementById('env-api-key')
+    };
+
+    // Load from LocalStorage
+    function loadSettings() {
+        inputs.clientId.value = localStorage.getItem('env_CLIENT_ID') || '';
+        inputs.clientSecret.value = localStorage.getItem('env_CLIENT_SECRET') || '';
+        inputs.redirectUri.value = localStorage.getItem('env_REDIRECT_URI') || '';
+        inputs.gistId.value = localStorage.getItem('env_GITHUB_GIST_ID') || '';
+        inputs.githubToken.value = localStorage.getItem('env_GITHUB_TOKEN') || '';
+        inputs.gistFilename.value = localStorage.getItem('env_GIST_FILENAME') || '';
+        inputs.apiKey.value = localStorage.getItem('env_APP_API_KEY') || '';
+    }
+
+    // Save to LocalStorage & Cookies
+    function saveSettings() {
+        const setCookie = (name, val) => {
+            document.cookie = `${name}=${encodeURIComponent(val)}; max-age=31536000; path=/`;
+        };
+
+        localStorage.setItem('env_CLIENT_ID', inputs.clientId.value);
+        setCookie('CLIENT_ID', inputs.clientId.value);
+
+        localStorage.setItem('env_CLIENT_SECRET', inputs.clientSecret.value);
+        setCookie('CLIENT_SECRET', inputs.clientSecret.value);
+
+        localStorage.setItem('env_REDIRECT_URI', inputs.redirectUri.value);
+        setCookie('SPOTIFY_REDIRECT_URI', inputs.redirectUri.value);
+
+        localStorage.setItem('env_GITHUB_GIST_ID', inputs.gistId.value);
+        setCookie('GITHUB_GIST_ID', inputs.gistId.value);
+
+        localStorage.setItem('env_GITHUB_TOKEN', inputs.githubToken.value);
+        setCookie('GITHUB_TOKEN', inputs.githubToken.value);
+
+        localStorage.setItem('env_GIST_FILENAME', inputs.gistFilename.value);
+        setCookie('GIST_FILENAME', inputs.gistFilename.value);
+
+        localStorage.setItem('env_APP_API_KEY', inputs.apiKey.value);
+        setCookie('APP_API_KEY', inputs.apiKey.value);
+
+        showToast('Settings saved! Reloading...', 'success');
+        setTimeout(() => window.location.reload(), 1000);
+    }
+
+    if (btnSettings) {
+        btnSettings.addEventListener('click', () => {
+            loadSettings();
+            modal.classList.remove('hidden');
+        });
+    }
+
+    if (btnCloseSettings) {
+        btnCloseSettings.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+    }
+
+    if (btnSaveSettings) {
+        btnSaveSettings.addEventListener('click', saveSettings);
+    }
+
+    // Close on click outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
+
+    // Initial Load of Cookies on Page Load (sync JS to Cookies just in case)
+    loadSettings();
+    saveSettings(); // Ensure cookies are set if they exist in localStorage but not cookies
 });
 
 setInterval(fetchState, 1000);

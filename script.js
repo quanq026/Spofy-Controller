@@ -405,7 +405,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Save to LocalStorage & Cookies
-    function saveSettings() {
+    // Save to LocalStorage & Cookies
+    function syncSettingsToCookies() {
         const setCookie = (name, val) => {
             document.cookie = `${name}=${encodeURIComponent(val)}; max-age=31536000; path=/`;
         };
@@ -430,7 +431,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         localStorage.setItem('env_APP_API_KEY', inputs.apiKey.value);
         setCookie('APP_API_KEY', inputs.apiKey.value);
+    }
 
+    function saveSettingsAndReload() {
+        syncSettingsToCookies();
         showToast('Settings saved! Reloading...', 'success');
         setTimeout(() => window.location.reload(), 1000);
     }
@@ -449,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (btnSaveSettings) {
-        btnSaveSettings.addEventListener('click', saveSettings);
+        btnSaveSettings.addEventListener('click', saveSettingsAndReload);
     }
 
     // Close on click outside
@@ -461,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial Load of Cookies on Page Load (sync JS to Cookies just in case)
     loadSettings();
-    saveSettings(); // Ensure cookies are set if they exist in localStorage but not cookies
+    syncSettingsToCookies(); // Ensure cookies are set if they exist in localStorage but not cookies
 });
 
 setInterval(fetchState, 1000);

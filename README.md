@@ -1,212 +1,100 @@
-# Spotify Controller
+# Spotify Controller 2.0
 
-**A simple Spotify Web API wrapper with automatic token management and essential playback control endpoints.**
+Self-hosted Spotify remote control with multi-user authentication.
 
-Spotify Controller provides a lightweight FastAPI server that simplifies Spotify Web API integration. It handles OAuth authentication, automatic token refresh via GitHub Gist storage, and exposes clean REST endpoints for controlling playback—play, pause, skip, shuffle, like tracks, manage queue, and seek. Includes a bonus responsive web frontend for easy interaction.
+> **Requirement:** Spotify Premium account is required. The Spotify Web API only allows playback control for Premium users.
 
-> ⚠️ **Requirement:** A **Spotify Premium account** is required to use this application. The Spotify Web API's playback control endpoints (play, pause, skip, seek, etc.) are only available for Premium users.
+![Preview](https://github.com/quanq026/Spo/blob/main/image.png?raw=true)
 
-## Preview
+## What's New in 2.0
 
-![Spotify Controller Preview](https://github.com/quanq026/Spo/blob/main/image.png?raw=true)
-
-## Features
-
-### Spotify API Control
-- **Playback Management** - Play, pause, next, previous track control
-- **Queue Management** - Fetch queue list and skip to any track in queue
-- **Shuffle & Repeat** - Toggle shuffle mode and control repeat state
-- **Track Management** - Like/unlike tracks (add to/remove from library)
-- **Seek Control** - Seek to any position in current track
-- **Volume Control** - Adjust playback volume
-- **Token Management** - Automatic OAuth token refresh and secure storage
-
-### Frontend UI (Bonus)
-- Clean, responsive web interface with dark theme
-- Real-time playback status updates (1s polling)
-- Queue preview with album thumbnails
-- Toast notifications for user feedback
-- Mobile-friendly responsive design
+- **Multi-user authentication** - Each user has their own account and session
+- **Per-user configuration** - Separate Spotify credentials and Gist storage per user
+- **API Key support** - Generate API keys for scripts, automation, IoT integration
+- **Setup wizard** - Step-by-step configuration guide
+- **Smart validation** - Automatically skip setup if already authenticated
 
 ## Requirements
 
-### Backend (Core)
 - Python 3.8+
-- FastAPI
-- Requests library
-- Uvicorn
-
-### Frontend (Optional)
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- JavaScript enabled
+- Spotify Premium Account
+- GitHub Account (for token storage)
 
 ## Installation
 
-### 1. Clone or set up the project
 ```bash
-git clone <repository-url>
+git clone https://github.com/quanq026/Spo.git
 cd Spo
-```
-
-### 2. Install Python dependencies
-```bash
 pip install -r requirements.txt
 ```
 
-### 3. Set up environment variables
-Create a `.env` file in the root directory with:
+Create `.env` file:
 
 ```env
-# Spotify Credentials
-CLIENT_ID=your_spotify_client_id
-CLIENT_SECRET=your_spotify_client_secret
-
-# GitHub Gist Configuration (for token storage)
-GITHUB_GIST_ID=your_gist_id
-GITHUB_TOKEN=your_github_token
-GIST_FILENAME=tokens.json
-
-# API Security (optional)
-APP_API_KEY=your_api_key
+ENVIRONMENT=development
+PRODUCTION_ORIGIN=https://your-domain.com
 ```
 
-### 4. Configure Spotify Dashboard
-1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-2. Select your app -> Settings
-3. Add **Redirect URIs**:
-   - `http://127.0.0.1:8000/api/spotify/callback` (For Local)
-   - `https://YOUR_VERCEL_APP_DOMAIN/api/spotify/callback` (For Vercel - Replace with your actual domain)
-4. Save
+Run server:
 
-### 5. Deployment Config (Vercel)
-When deploying to Vercel, add a new Environment Variable:
-- **Key**: `SPOTIFY_REDIRECT_URI`
-- **Value**: `https://YOUR_VERCEL_APP_DOMAIN/api/spotify/callback`
-
-### 6. Run and Setup
-1. Run the server:
-   ```bash
-   uvicorn index:app --reload --host 0.0.0.0 --port 8000
-   ```
-2. Go to `http://127.0.0.1:8000/login` in your browser
-3. Log in to Spotify and Authorize
-4. You will be redirected to a success page. Done!
 ```bash
-uvicorn index:app --reload --host 0.0.0.0 --port 8000
+uvicorn index:app --host 127.0.0.1 --port 8000 --reload
 ```
-
-### 5. Access the application
-- Open `http://localhost:8000` in your browser
-
-## Project Structure
-
-```
-.
-├── index.html          # Main UI template
-├── index.py           # FastAPI backend server
-├── script.js          # Frontend JavaScript logic
-├── style.css          # Frontend styling
-├── vercel.json        # Vercel deployment config
-├── requirements.txt   # Python dependencies
-└── README.md          # This file
-```
-
-## API Endpoints
-
-### Playback Control
-- `GET /current` - Get current playback state and track info
-- `GET /play` - Resume playback
-- `GET /pause` - Pause playback
-- `GET /next` - Skip to next track
-- `GET /prev` - Skip to previous track
-
-### Queue Management
-- `GET /queue` - Get queue list and upcoming tracks
-- `GET /queue/{index}` - Play track at queue index
-
-### Track Management
-- `GET /like` - Add current track to library
-- `GET /dislike` - Remove current track from library
-
-### Controls
-- `GET /shuffle/{state}` - Toggle shuffle mode (true/false)
-- `GET /seek/{percent}` - Seek to position (0-100%)
-- `GET /volume/{level}` - Set volume level (0-100)
-
-### Utilities
-- `GET /gettoken` - Get current valid access token
-- `GET /debug` - Check token status and expiration
-- `GET /force-renew` - Manually renew access token
-- `POST /init` - Initialize tokens (requires access_token and refresh_token)
-
-## Deployment
-
-### Deploy to Vercel
-1. Install Vercel CLI: `npm i -g vercel`
-2. Set environment variables in Vercel dashboard
-3. Deploy: `vercel`
-
-The `vercel.json` config is already set up for FastAPI deployment.
 
 ## Usage
 
-### API-First Approach
-Use the FastAPI endpoints directly in your applications:
+1. Go to `http://127.0.0.1:8000`
+2. Create account and login
+3. Follow Setup Wizard to configure Spotify App and GitHub Gist
+4. Connect Spotify - done
+
+Next time you login, you'll go directly to the player.
+
+### Spotify App Setup
+
+At [Spotify Developer Dashboard](https://developer.spotify.com/dashboard), add Redirect URIs:
+- Local: `http://127.0.0.1:8000/api/spotify/callback`
+- Production: `https://YOUR_DOMAIN/api/spotify/callback`
+
+## API Reference
+
+All endpoints require either:
+- Session cookie (automatic when logged in via web)
+- API Key via URL param: `?api_key=YOUR_KEY`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/current` | Get current track info |
+| GET | `/queue` | Get queue list |
+| POST | `/play` | Play/Resume |
+| POST | `/pause` | Pause |
+| POST | `/next` | Next track |
+| POST | `/prev` | Previous track |
+| POST | `/shuffle` | Toggle shuffle |
+| POST | `/like` | Like/Unlike track |
+| POST | `/seek?position_ms=` | Seek to position |
+
+Example:
 
 ```bash
-# Get current playback state
-curl http://localhost:8000/current
-
-# Control playback
-curl http://localhost:8000/play
-curl http://localhost:8000/pause
-curl http://localhost:8000/next
-
-# Manage queue
-curl http://localhost:8000/queue
-curl http://localhost:8000/queue/1
-
-# Advanced controls
-curl http://localhost:8000/shuffle/true
-curl http://localhost:8000/seek/50
-curl http://localhost:8000/like
+curl "http://127.0.0.1:8000/current?api_key=YOUR_API_KEY"
+curl -X POST "http://127.0.0.1:8000/next?api_key=YOUR_API_KEY"
 ```
 
-### Web UI (Optional)
-1. Visit `http://localhost:8000` in your browser
-2. App automatically connects to your Spotify playback
-3. Use the interface to control playback visually
+## Deploy to Vercel
 
-See [API Endpoints](#api-endpoints) for complete documentation.
+1. Push to GitHub
+2. Import to Vercel
+3. Add environment variables: `ENVIRONMENT=production`, `PRODUCTION_ORIGIN=https://your-app.vercel.app`
+4. Deploy
 
-## Troubleshooting
+## Security
 
-### "No active playback" message
-- Make sure Spotify is playing on one of your devices
-- Restart the app and try again
+- Passwords hashed with PBKDF2-HMAC-SHA256
+- Session tokens expire after 30 days
+- Spotify tokens stored on user's GitHub Gist (not on server)
+- API keys unique per user, regeneratable anytime
 
-### "Authentication failed"
-- Check your CLIENT_ID and CLIENT_SECRET
-- Verify Spotify API credentials in Developer Dashboard
-- Check token expiration in `/debug` endpoint
+## License
 
-### "Failed to save to Gist"
-- Verify GITHUB_GIST_ID and GITHUB_TOKEN are correct
-- Ensure the gist exists and is accessible
-- Check that tokens.json file exists in the gist
-
-### Queue not updating
-- Queue updates when track changes or on polling intervals
-- Try refreshing the page
-
-## Environment Variables Reference
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| CLIENT_ID | Yes | Spotify app Client ID |
-| CLIENT_SECRET | Yes | Spotify app Client Secret |
-| GITHUB_GIST_ID | Yes | GitHub Gist ID for token storage |
-| GITHUB_TOKEN | Yes | GitHub Personal Access Token |
-| GIST_FILENAME | Yes | Filename in gist (e.g., tokens.json) |
-| APP_API_KEY | No | Optional API key for endpoint protection |
-| SPOTIFY_REDIRECT_URI | No | Custom redirect URI (Default: localhost) |
+MIT

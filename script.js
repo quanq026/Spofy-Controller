@@ -1,5 +1,11 @@
 const API_URL = "";
-const API_KEY_PARAM = "";
+const API_KEY = "";
+
+function getHeaders() {
+    const headers = {};
+    if (API_KEY) headers['X-API-Key'] = API_KEY;
+    return headers;
+}
 
 let isPlaying = false;
 let currentTrackId = null;
@@ -7,7 +13,6 @@ let isActionInProgress = false;
 let isDeviceOffline = false;
 let consecutiveFailures = 0;
 
-// DOM Elements Reference
 const els = {
     player: document.getElementById("player-view"),
     loading: document.getElementById("loading-state"),
@@ -28,7 +33,7 @@ const els = {
 
 async function fetchState() {
     try {
-        const res = await fetch(`${API_URL}/current${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
+        const res = await fetch(`${API_URL}/current`, { headers: getHeaders() });
 
         if (!res.ok) {
             handleFetchError(res.status);
@@ -42,14 +47,12 @@ async function fetchState() {
             return;
         }
 
-        // Validate required data fields - if missing, show offline
         if (!data.track || !data.track_id || !data.progress) {
             showOfflineState();
             isDeviceOffline = true;
             return;
         }
 
-        // Success - reset failure counter and show player
         consecutiveFailures = 0;
         isDeviceOffline = false;
         updateUI(data);
@@ -71,7 +74,6 @@ function handleFetchError(status) {
         showOfflineState();
         isDeviceOffline = true;
     } else if (status === 404 || status === 403) {
-        // Device offline or not available - show immediately
         showOfflineState();
         isDeviceOffline = true;
     } else if (status >= 500 || status === null) {
@@ -79,20 +81,15 @@ function handleFetchError(status) {
     }
 }
 
-// Initialize State based on HTML attributes
 const appContainer = document.querySelector('.app-container');
 
-// Force initial state if missing (handles stale HTML + New JS case)
 if (appContainer && !appContainer.hasAttribute('data-state')) {
-    console.log("Forcing initial loading state");
     appContainer.setAttribute('data-state', 'loading');
 }
 
 function setAppState(state) {
     if (!appContainer) return;
     appContainer.setAttribute('data-state', state);
-
-    // Manage controls based on state
     if (state === 'player') {
         enableAllControls();
     } else {
@@ -127,21 +124,18 @@ function enableAllControls() {
 function updateUI(data) {
     if (!data) return;
 
-    // Track Info
     if (currentTrackId !== data.track_id) {
         currentTrackId = data.track_id;
         els.title.innerText = data.track;
         els.artist.innerText = data.artist;
         els.art.src = data.thumbnail;
         els.art.alt = `Album art for ${data.track} by ${data.artist}`;
-        fetchQueue(); // Update queue when song changes
+        fetchQueue();
     }
 
-    // Playback Status
     isPlaying = data.is_playing;
     togglePlayIcon(isPlaying);
 
-    // Playback Status (Progress, Time, Duration)
     if (data.progress_percent !== undefined) {
         els.progressFill.style.width = data.progress_percent + "%";
     }
@@ -151,7 +145,6 @@ function updateUI(data) {
         els.totTime.innerText = tot;
     }
 
-    // Like Status
     const heartIcon = els.likeBtn.querySelector('svg');
     if (data.is_liked) {
         els.likeBtn.classList.add("active");
@@ -161,14 +154,13 @@ function updateUI(data) {
         if (heartIcon) heartIcon.style.fill = "none";
     }
 
-    // Shuffle
     if (data.shuffle_state) els.shuffleBtn.classList.add("active");
     else els.shuffleBtn.classList.remove("active");
 }
 
 async function fetchQueue() {
     try {
-        const res = await fetch(`${API_URL}/queue${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
+        const res = await fetch(`${API_URL}/queue`, { headers: getHeaders() });
         if (!res.ok) return;
 
         const data = await res.json();
@@ -240,7 +232,7 @@ async function control(action) {
     isActionInProgress = true;
 
     try {
-        const res = await fetch(`${API_URL}/${action}${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
+        const res = await fetch(`${API_URL}/${action}`, { headers: getHeaders() });
         if (!res.ok) {
             if (res.status === 404 || res.status === 403) {
                 showOfflineState();
@@ -268,7 +260,7 @@ function togglePlay() {
 async function toggleShuffle() {
     try {
         const isShuffle = els.shuffleBtn.classList.contains("active");
-        const res = await fetch(`${API_URL}/shuffle/${!isShuffle}${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
+        const res = await fetch(`${API_URL}/shuffle/${!isShuffle}`, { headers: getHeaders() });
         if (!res.ok) {
             showToast('Failed to toggle shuffle', 'error');
             return;
@@ -291,7 +283,7 @@ async function playQueue(index) {
         return;
     }
     try {
-        const res = await fetch(`${API_URL}/queue/${index}${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
+        const res = await fetch(`${API_URL}/queue/${index}`, { headers: getHeaders() });
         if (!res.ok) {
             if (res.status === 404 || res.status === 403) {
                 showOfflineState();
@@ -339,7 +331,6 @@ function showToast(message, type = 'info') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Set up progress bar click handler for seeking
     const progressBar = document.querySelector('.progress-bar');
     els.progressBar = progressBar;
 
@@ -354,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const percent = ((e.clientX - rect.left) / rect.width) * 100;
 
             try {
-                const res = await fetch(`${API_URL}/seek/${Math.round(percent)}${API_KEY_PARAM ? '?key=' + API_KEY_PARAM : ''}`);
+                const res = await fetch(`${API_URL}/seek/${Math.round(percent)}`, { headers: getHeaders() });
                 if (!res.ok) {
                     if (res.status === 404 || res.status === 403) {
                         showOfflineState();
@@ -377,3 +368,135 @@ document.addEventListener('DOMContentLoaded', () => {
 
 setInterval(fetchState, 1000);
 fetchState();
+
+// ======================= Sidebar Functions =======================
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+
+        // Load user info when opening
+        if (sidebar.classList.contains('open')) {
+            loadSidebarData();
+        }
+    }
+}
+
+async function loadSidebarData() {
+    try {
+        // Load user info
+        const userRes = await fetch('/api/auth/me');
+        if (userRes.ok) {
+            const user = await userRes.json();
+            const usernameEl = document.getElementById('sidebar-username');
+            const avatarEl = document.getElementById('user-avatar');
+            if (usernameEl) usernameEl.textContent = user.username;
+            if (avatarEl) avatarEl.textContent = user.username.charAt(0).toUpperCase();
+        }
+
+        // Load config
+        const configRes = await fetch('/api/config');
+        if (configRes.ok) {
+            const config = await configRes.json();
+            document.getElementById('config-client-id').textContent = config.client_id || '-';
+            document.getElementById('config-client-secret').textContent = config.client_secret || '-';
+            document.getElementById('config-gist-id').textContent = config.gist_id || '-';
+            document.getElementById('config-github-token').textContent = config.github_token || '-';
+            document.getElementById('config-gist-filename').textContent = config.gist_filename || '-';
+        }
+
+        // Load API key
+        const apiKeyRes = await fetch('/api/my-api-key');
+        if (apiKeyRes.ok) {
+            const data = await apiKeyRes.json();
+            const apiKeyEl = document.getElementById('config-api-key');
+            if (apiKeyEl) {
+                apiKeyEl.textContent = data.api_key || 'Not generated';
+                apiKeyEl.title = data.api_key || '';
+            }
+        }
+    } catch (err) {
+        console.error('Error loading sidebar data:', err);
+    }
+}
+
+async function generateApiKey() {
+    const btn = document.getElementById('btn-generate-api');
+    const textEl = document.getElementById('btn-generate-text');
+
+    if (!btn || btn.disabled) return;
+
+    btn.disabled = true;
+    textEl.textContent = 'Đang tạo...';
+
+    try {
+        const res = await fetch('/api/generate-api-key', { method: 'POST' });
+        const data = await res.json();
+
+        if (data.success) {
+            const apiKeyEl = document.getElementById('config-api-key');
+            if (apiKeyEl) {
+                apiKeyEl.textContent = data.api_key;
+                apiKeyEl.title = data.api_key;
+            }
+            textEl.textContent = 'Đã tạo!';
+            setTimeout(() => {
+                textEl.textContent = 'Tạo API Key mới';
+            }, 2000);
+        } else {
+            textEl.textContent = 'Lỗi!';
+        }
+    } catch (err) {
+        console.error('Error generating API key:', err);
+        textEl.textContent = 'Lỗi!';
+    } finally {
+        btn.disabled = false;
+        setTimeout(() => {
+            textEl.textContent = 'Tạo API Key mới';
+        }, 2000);
+    }
+}
+
+async function copyApiKey() {
+    const apiKeyEl = document.getElementById('config-api-key');
+    const copyBtn = document.getElementById('btn-copy-api');
+
+    if (!apiKeyEl || !apiKeyEl.title) return;
+
+    try {
+        await navigator.clipboard.writeText(apiKeyEl.title);
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+            copyBtn.classList.remove('copied');
+        }, 2000);
+    } catch (err) {
+        console.error('Copy failed:', err);
+    }
+}
+
+function goToSetup() {
+    window.location.href = '/setup';
+}
+
+async function logout() {
+    try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/welcome';
+    } catch (err) {
+        console.error('Logout error:', err);
+        window.location.href = '/welcome';
+    }
+}
+
+// Close sidebar with Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar && sidebar.classList.contains('open')) {
+            toggleSidebar();
+        }
+    }
+});

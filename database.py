@@ -3,7 +3,12 @@ import os
 from datetime import datetime
 from contextlib import contextmanager
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "spotify_controller.db")
+# Use /app/data in production (Docker volume), local directory otherwise
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+if ENVIRONMENT == "production":
+    DB_PATH = "/app/data/spotify_controller.db"
+else:
+    DB_PATH = os.path.join(os.path.dirname(__file__), "spotify_controller.db")
 
 def get_connection():
     conn = sqlite3.connect(DB_PATH)

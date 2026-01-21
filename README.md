@@ -23,8 +23,8 @@ Self-hosted Spotify remote control with multi-user authentication.
 ## Installation
 
 ```bash
-git clone https://github.com/quanq026/Spo.git
-cd Spo
+git clone https://github.com/quanq026/Spofy-Controller.git
+cd Spofy-Controller
 pip install -r requirements.txt
 ```
 

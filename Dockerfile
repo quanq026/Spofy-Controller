@@ -66,5 +66,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" || exit 1
 
-# Run application with uvicorn
-CMD ["python", "-m", "uvicorn", "index:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+# Run application with uvicorn (single worker to keep oauth state in memory)
+CMD ["python", "-m", "uvicorn", "index:app", "--host", "0.0.0.0", "--port", "8000"]

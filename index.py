@@ -499,7 +499,7 @@ def spotify_login(session_token: str = Cookie(None, alias="session_token")):
         return RedirectResponse("/setup")
     
     client_id = config["client_id"]
-    redirect_uri = config.get("redirect_uri") or f"http://127.0.0.1:8000/api/spotify/callback"
+    redirect_uri = config.get("redirect_uri") or (f"https://100.53.0.184.nip.io/api/spotify/callback" if ENVIRONMENT == "production" else f"http://127.0.0.1:8000/api/spotify/callback")
     
     state = secrets.token_urlsafe(32)
     oauth_pending_states[state] = {"time": time.time(), "user_id": user["id"]}
@@ -543,7 +543,7 @@ def spotify_callback(code: str, state: str = None, session_token: str = Cookie(N
     
     client_id = config["client_id"]
     client_secret = config["client_secret"]
-    redirect_uri = config.get("redirect_uri") or f"http://127.0.0.1:8000/api/spotify/callback"
+    redirect_uri = config.get("redirect_uri") or (f"https://100.53.0.184.nip.io/api/spotify/callback" if ENVIRONMENT == "production" else f"http://127.0.0.1:8000/api/spotify/callback")
     
     url = "https://accounts.spotify.com/api/token"
     auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()

@@ -1,0 +1,67 @@
+# =============================================================
+# Docker Ignore File - Spotify Controller
+# =============================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Documentation
+*.md
+LICENSE
+
+# CI/CD (not needed in Docker image)
+.github/
+
+# Docker files (not needed inside image)
+Dockerfile
+.dockerignore
+
+# Vercel
+vercel.json
+.vercel/
+
+# Local data (mounted as volume in production)
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.bak
+*.tmp
+.cache/
+
+# Windows batch files
+*.bat
+
+# Application config (reference only)
+application.yaml

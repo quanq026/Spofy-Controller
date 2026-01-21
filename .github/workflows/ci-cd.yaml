@@ -1,0 +1,106 @@
+name: CI/CD Pipeline - Build, Push & Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/spo-controller
+  CONTAINER_NAME: spo-controller
+
+jobs:
+  build-and-push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_IMAGE }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT || 22 }}
+          script: |
+            # Pull latest image
+            docker pull ${{ env.DOCKER_IMAGE }}:latest
+            
+            # Stop and remove existing container (if any)
+            docker stop ${{ env.CONTAINER_NAME }} 2>/dev/null || true
+            docker rm ${{ env.CONTAINER_NAME }} 2>/dev/null || true
+            
+            # Run new container
+            docker run -d \
+              --name ${{ env.CONTAINER_NAME }} \
+              --restart unless-stopped \
+              -p 8000:8000 \
+              -e ENVIRONMENT=production \
+              -e PRODUCTION_ORIGIN=${{ secrets.PRODUCTION_ORIGIN }} \
+              -v spo-data:/app/data \
+              ${{ env.DOCKER_IMAGE }}:latest
+            
+            # Clean up old images
+            docker image prune -af --filter "until=24h"
+            
+            # Verify deployment
+            sleep 5
+            docker ps | grep ${{ env.CONTAINER_NAME }}
+            echo "Deployment completed successfully!"
+
+# =============================================================
+# REQUIRED GITHUB SECRETS:
+# =============================================================
+# DOCKER_USERNAME     - Docker Hub username
+# DOCKER_PASSWORD     - Docker Hub password or access token
+# EC2_HOST            - EC2 public IP or domain
+# EC2_USERNAME        - SSH username (e.g., ubuntu, ec2-user)
+# EC2_SSH_KEY         - Private SSH key for EC2 access
+# EC2_SSH_PORT        - SSH port (optional, defaults to 22)
+# PRODUCTION_ORIGIN   - Production URL (e.g., https://your-domain.com)
+# =============================================================

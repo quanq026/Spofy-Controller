@@ -1,0 +1,91 @@
+# =============================================================
+# Application Configuration - Spotify Controller
+# =============================================================
+# This file contains configuration for different environments.
+# Copy relevant values to .env file or set as environment variables.
+# =============================================================
+
+app:
+  name: spo-controller
+  version: "2.0"
+  description: "Self-hosted Spotify remote control with multi-user authentication"
+
+# =============================================================
+# Local Development Profile
+# =============================================================
+profiles:
+  local:
+    environment: development
+    server:
+      host: "127.0.0.1"
+      port: 8000
+      reload: true
+    cors:
+      origins:
+        - "http://localhost:8000"
+        - "http://127.0.0.1:8000"
+        - "http://127.0.0.1:5500"
+        - "http://localhost:5500"
+    database:
+      path: "./spotify_controller.db"
+    logging:
+      level: DEBUG
+
+  # =============================================================
+  # Production Profile
+  # =============================================================
+  production:
+    environment: production
+    server:
+      host: "0.0.0.0"
+      port: 8000
+      reload: false
+      workers: 2
+    cors:
+      origins:
+        - "${PRODUCTION_ORIGIN}"
+    database:
+      path: "/app/data/spotify_controller.db"
+    logging:
+      level: INFO
+
+# =============================================================
+# Environment Variables Reference
+# =============================================================
+# The following environment variables should be configured:
+#
+# Required:
+#   ENVIRONMENT          - "development" or "production"
+#   PRODUCTION_ORIGIN    - Production domain (e.g., https://your-domain.com)
+#
+# Optional (configured per-user via web interface):
+#   - Spotify credentials (client_id, client_secret)
+#   - GitHub Gist credentials (gist_id, github_token)
+#
+# =============================================================
+
+# =============================================================
+# Docker Configuration Reference
+# =============================================================
+docker:
+  image_name: "spo-controller"
+  container_name: "spo-controller"
+  ports:
+    - "8000:8000"
+  volumes:
+    - "spo-data:/app/data"
+  healthcheck:
+    endpoint: "/health"
+    interval: "30s"
+    timeout: "10s"
+    retries: 3
+
+# =============================================================
+# EC2 Deployment Notes
+# =============================================================
+# 1. Ensure Docker is installed on EC2 instance
+# 2. Open port 8000 in Security Group (or use reverse proxy)
+# 3. Configure SSL/TLS via Nginx or AWS ALB for production
+# 4. Set up proper firewall rules
+# 5. Consider using a persistent volume for database
+# =============================================================

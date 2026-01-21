@@ -93,5 +93,5 @@ Desktop.ini
 run.bat
 spotify_controller.db
 
-.github/
+# Local shared folder
 .shared/

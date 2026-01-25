@@ -90,9 +90,7 @@ curl -X POST "http://127.0.0.1:8000/next?api_key=YOUR_API_KEY"
 
 ## Security
 
-- Passwords hashed with PBKDF2-HMAC-SHA256
 - Session tokens expire after 30 days
-- Spotify tokens stored on user's GitHub Gist (not on server)
 - API keys unique per user, regeneratable anytime
 
 ## License

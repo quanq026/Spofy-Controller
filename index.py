@@ -796,7 +796,8 @@ def play_from_queue(index: int, request: Request, auth: str = Depends(verify_api
         raise HTTPException(status_code=player_res.status_code, detail="Cannot get player info")
     
     player_data = player_res.json()
-    context_uri = player_data.get("context", {}).get("uri", None)
+    context = player_data.get("context") or {}
+    context_uri = context.get("uri")
 
     queue_res = spotify_request("GET", "/me/player/queue", access_token, config)
     if queue_res.status_code != 200:

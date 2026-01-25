@@ -138,11 +138,19 @@ function updateUI(data) {
 
     if (data.progress_percent !== undefined) {
         els.progressFill.style.width = data.progress_percent + "%";
+        // Update ARIA attributes for accessibility
+        if (els.progressBar) {
+            els.progressBar.setAttribute('aria-valuenow', Math.round(data.progress_percent));
+        }
     }
     if (data.progress) {
         const [curr, tot] = data.progress.split(" / ");
         els.currTime.innerText = curr;
         els.totTime.innerText = tot;
+        // Update ARIA valuetext for screen readers
+        if (els.progressBar) {
+            els.progressBar.setAttribute('aria-valuetext', `${curr} of ${tot}`);
+        }
     }
 
     const heartIcon = els.likeBtn.querySelector('svg');
@@ -335,17 +343,29 @@ document.addEventListener('DOMContentLoaded', () => {
     els.progressBar = progressBar;
 
     if (progressBar) {
-        progressBar.style.cursor = 'pointer';
-        progressBar.addEventListener('click', async (e) => {
+        let isSeeking = false;
+        let seekDebounceTimer = null;
+        let lastSeekPercent = 0;
+
+        // Debounced seek function to prevent API spam
+        const debouncedSeek = (percent) => {
+            if (seekDebounceTimer) {
+                clearTimeout(seekDebounceTimer);
+            }
+            lastSeekPercent = percent;
+            seekDebounceTimer = setTimeout(async () => {
+                await performSeek(Math.round(lastSeekPercent));
+            }, 150);
+        };
+
+        // Actual seek API call
+        async function performSeek(percent) {
             if (isDeviceOffline) {
                 showToast('Device is offline', 'error');
                 return;
             }
-            const rect = progressBar.getBoundingClientRect();
-            const percent = ((e.clientX - rect.left) / rect.width) * 100;
-
             try {
-                const res = await fetch(`${API_URL}/seek/${Math.round(percent)}`, { headers: getHeaders() });
+                const res = await fetch(`${API_URL}/seek/${percent}`, { headers: getHeaders() });
                 if (!res.ok) {
                     if (res.status === 404 || res.status === 403) {
                         showOfflineState();
@@ -362,12 +382,140 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Seek error:', e);
                 showToast('Network error', 'error');
             }
+        }
+
+        // Calculate seek percent from event
+        function getSeekPercent(e, rect) {
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const percent = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+            return percent;
+        }
+
+        // Update progress fill visually during seeking
+        function updateProgressVisual(percent) {
+            if (els.progressFill) {
+                els.progressFill.style.width = percent + '%';
+            }
+            // Update ARIA value
+            progressBar.setAttribute('aria-valuenow', Math.round(percent));
+        }
+
+        // Mouse/Touch start
+        function handleSeekStart(e) {
+            if (isDeviceOffline) {
+                showToast('Device is offline', 'error');
+                return;
+            }
+            isSeeking = true;
+            progressBar.classList.add('seeking');
+            const rect = progressBar.getBoundingClientRect();
+            const percent = getSeekPercent(e, rect);
+            updateProgressVisual(percent);
+            lastSeekPercent = percent;
+
+            if (e.type === 'mousedown') {
+                e.preventDefault();
+            }
+        }
+
+        // Mouse/Touch move
+        function handleSeekMove(e) {
+            if (!isSeeking) return;
+            e.preventDefault();
+            const rect = progressBar.getBoundingClientRect();
+            const percent = getSeekPercent(e, rect);
+            updateProgressVisual(percent);
+            lastSeekPercent = percent;
+        }
+
+        // Mouse/Touch end
+        function handleSeekEnd(e) {
+            if (!isSeeking) return;
+            isSeeking = false;
+            progressBar.classList.remove('seeking');
+            debouncedSeek(lastSeekPercent);
+        }
+
+        // Mouse events
+        progressBar.addEventListener('mousedown', handleSeekStart);
+        document.addEventListener('mousemove', handleSeekMove);
+        document.addEventListener('mouseup', handleSeekEnd);
+
+        // Touch events for mobile
+        progressBar.addEventListener('touchstart', handleSeekStart, { passive: false });
+        progressBar.addEventListener('touchmove', handleSeekMove, { passive: false });
+        progressBar.addEventListener('touchend', handleSeekEnd);
+        progressBar.addEventListener('touchcancel', handleSeekEnd);
+
+        // Click fallback for simple taps
+        progressBar.addEventListener('click', (e) => {
+            if (isSeeking) return; // Ignore if already handled by drag
+            const rect = progressBar.getBoundingClientRect();
+            const percent = getSeekPercent(e, rect);
+            updateProgressVisual(percent);
+            debouncedSeek(percent);
+        });
+
+        // Keyboard accessibility for progress bar
+        progressBar.addEventListener('keydown', (e) => {
+            if (isDeviceOffline) return;
+
+            const currentPercent = parseFloat(els.progressFill?.style.width) || 0;
+            let newPercent = currentPercent;
+
+            switch (e.key) {
+                case 'ArrowRight':
+                case 'ArrowUp':
+                    newPercent = Math.min(100, currentPercent + 5);
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowDown':
+                    newPercent = Math.max(0, currentPercent - 5);
+                    break;
+                case 'Home':
+                    newPercent = 0;
+                    break;
+                case 'End':
+                    newPercent = 100;
+                    break;
+                default:
+                    return;
+            }
+
+            e.preventDefault();
+            updateProgressVisual(newPercent);
+            debouncedSeek(newPercent);
         });
     }
 });
 
-setInterval(fetchState, 1000);
-fetchState();
+// Page Visibility API - pause polling when tab is hidden
+let pollInterval = null;
+
+function startPolling() {
+    if (pollInterval) return;
+    pollInterval = setInterval(fetchState, 1000);
+    fetchState();
+}
+
+function stopPolling() {
+    if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+    }
+}
+
+// Handle visibility change
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        stopPolling();
+    } else {
+        startPolling();
+    }
+});
+
+// Start polling initially
+startPolling();
 
 // ======================= Sidebar Functions =======================
 function toggleSidebar() {

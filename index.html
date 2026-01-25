@@ -451,29 +451,32 @@
     <div class="app-container" data-state="loading">
         <div id="loading-state" class="state-view">
             <div class="player-section">
-                <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                <div class="skeleton-player-content">
                     <div class="skeleton skeleton-avatar"></div>
-                    <div style="width: 100%;">
+                    <div class="skeleton-track-info">
                         <div class="skeleton skeleton-text"></div>
-                        <div class="skeleton skeleton-text-sm" style="margin-top: 12px;"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
                     </div>
-                    <div style="width: 100%;">
-                        <div class="skeleton skeleton-text" style="width: 100%; height: 8px; margin-bottom: 8px;"></div>
-                        <div class="skeleton skeleton-text-sm" style="width: 40%; height: 12px;"></div>
+                    <div class="skeleton-progress">
+                        <div class="skeleton skeleton-progress-bar"></div>
+                        <div class="skeleton skeleton-time"></div>
                     </div>
-                    <div style="display: flex; gap: 16px; margin-top: 20px;">
-                        <div class="skeleton" style="width: 40px; height: 40px; border-radius: 50%;"></div>
-                        <div class="skeleton" style="width: 40px; height: 40px; border-radius: 50%;"></div>
-                        <div class="skeleton" style="width: 40px; height: 40px; border-radius: 50%;"></div>
+                    <div class="skeleton-controls">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn-play"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
                     </div>
                 </div>
             </div>
             <div class="queue-section">
                 <h3>Up Next</h3>
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <div class="skeleton" style="width: 100%; height: 50px; border-radius: 8px;"></div>
-                    <div class="skeleton" style="width: 100%; height: 50px; border-radius: 8px;"></div>
-                    <div class="skeleton" style="width: 100%; height: 50px; border-radius: 8px;"></div>
+                <div class="skeleton-queue-content">
+                    <div class="skeleton skeleton-queue-item"></div>
+                    <div class="skeleton skeleton-queue-item"></div>
+                    <div class="skeleton skeleton-queue-item"></div>
+                    <div class="skeleton skeleton-queue-item"></div>
                 </div>
             </div>
         </div>
@@ -510,7 +513,8 @@
                         <span id="current-time">0:00</span>
                         <span id="total-time">0:00</span>
                     </div>
-                    <div class="progress-bar">
+                    <div class="progress-bar" role="slider" aria-label="Seek track position" aria-valuemin="0"
+                        aria-valuemax="100" aria-valuenow="0" aria-valuetext="0:00" tabindex="0">
                         <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
                     </div>
                 </div>

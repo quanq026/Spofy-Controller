@@ -5,6 +5,30 @@
     --text-main: #ffffff;
     --text-sec: #b3b3b3;
     --glass: rgba(255, 255, 255, 0.05);
+
+    /* Spacing system */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+
+    /* Player sizing - responsive */
+    --player-width: clamp(320px, 100%, 380px);
+    --queue-width: clamp(320px, 100%, 480px);
+    --album-art-size: clamp(200px, 60vw, 285px);
+    --track-title-size: clamp(18px, 4vw, 22px);
+    --artist-size: clamp(13px, 3vw, 15px);
+
+    /* Touch targets */
+    --touch-target-min: 44px;
+    --progress-bar-height: 6px;
+    --progress-bar-touch-height: 24px;
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 200ms ease;
+    --transition-slow: 300ms ease;
 }
 
 * {
@@ -151,35 +175,109 @@ body {
     border-radius: 8px;
 }
 
-.skeleton-avatar {
-    width: 200px;
-    height: 200px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    flex-shrink: 0;
-}
-
-.skeleton-text {
-    width: 80%;
-    height: 20px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-}
-
-.skeleton-text-sm {
-    width: 60%;
-    height: 14px;
-    border-radius: 6px;
-}
-
-.player-section {
-    flex: 0 0 auto;
-    width: 380px;
+/* Loading state layout */
+#loading-state .player-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 24px 20px;
+}
+
+.skeleton-player-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.skeleton-avatar {
+    width: var(--album-art-size);
+    height: var(--album-art-size);
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.skeleton-track-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.skeleton-text {
+    width: 70%;
+    height: 20px;
+    border-radius: 8px;
+}
+
+.skeleton-text-sm {
+    width: 50%;
+    height: 14px;
+    border-radius: 6px;
+}
+
+.skeleton-progress {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.skeleton-progress-bar {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+}
+
+.skeleton-time {
+    width: 35%;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.skeleton-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+}
+
+.skeleton-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-btn-play {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+}
+
+/* Queue skeleton */
+.skeleton-queue-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.skeleton-queue-item {
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+}
+
+.player-section {
+    flex: 0 0 auto;
+    width: var(--player-width);
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg) var(--spacing-md);
     background: rgba(255, 255, 255, 0.03);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -187,13 +285,14 @@ body {
 
 .queue-section {
     flex: 0 0 auto;
-    width: 480px;
+    width: var(--queue-width);
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 24px 20px;
+    padding: var(--spacing-lg) var(--spacing-md);
     overflow: hidden;
 }
 
@@ -218,9 +317,9 @@ header {
 
 .album-art-container {
     width: 100%;
-    max-width: 285px;
+    max-width: var(--album-art-size);
     aspect-ratio: 1;
-    margin-bottom: 24px;
+    margin-bottom: var(--spacing-lg);
     border-radius: 12px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     position: relative;
@@ -235,12 +334,12 @@ header {
 
 .track-info {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: var(--spacing-lg);
     width: 100%;
 }
 
 #track-name {
-    font-size: 22px;
+    font-size: var(--track-title-size);
     font-weight: 700;
     margin-bottom: 6px;
     white-space: nowrap;
@@ -249,13 +348,13 @@ header {
 }
 
 #artist-name {
-    font-size: 15px;
+    font-size: var(--artist-size);
     color: var(--text-sec);
 }
 
 .progress-container {
     width: 100%;
-    margin-bottom: 28px;
+    margin-bottom: var(--spacing-lg);
 }
 
 .time-labels {
@@ -263,32 +362,86 @@ header {
     justify-content: space-between;
     font-size: 12px;
     color: var(--text-sec);
-    margin-bottom: 8px;
+    margin-bottom: var(--spacing-sm);
 }
 
+/* Progress bar wrapper for larger touch target */
 .progress-bar {
     width: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    overflow: visible;
+    height: var(--progress-bar-touch-height);
+    background: transparent;
     cursor: pointer;
     position: relative;
-    transform: scaleY(0.67);
-    transform-origin: center;
-    transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    touch-action: none;
+    /* Prevent scroll while dragging */
+    -webkit-tap-highlight-color: transparent;
 }
 
-.progress-bar:hover {
-    transform: scaleY(1);
+/* Visual track */
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: var(--progress-bar-height);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: height var(--transition-fast);
+}
+
+/* Hover effect only on devices with hover capability */
+@media (hover: hover) and (pointer: fine) {
+    .progress-bar:hover::before {
+        height: 8px;
+    }
+
+    .progress-bar:hover .progress-fill::after {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
 }
 
 .progress-fill {
-    height: 100%;
+    height: var(--progress-bar-height);
     background: var(--text-main);
-    border-radius: 2px;
+    border-radius: 3px;
     transition: width 0.1s linear;
     pointer-events: none;
+    position: relative;
+    z-index: 1;
+}
+
+/* Scrubber handle */
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%) scale(0);
+    width: 12px;
+    height: 12px;
+    background: var(--text-main);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Show handle when actively seeking */
+.progress-bar.seeking .progress-fill::after,
+.progress-bar:active .progress-fill::after {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
+/* Active state for progress bar */
+.progress-bar:active::before,
+.progress-bar.seeking::before {
+    height: 8px;
 }
 
 .controls {
@@ -304,11 +457,7 @@ button {
     border: none;
     color: var(--text-main);
     cursor: pointer;
-    transition: transform 0.1s, opacity 0.2s;
-}
-
-button:active {
-    transform: scale(0.95);
+    transition: opacity var(--transition-normal), background var(--transition-normal), color var(--transition-normal);
 }
 
 button:disabled {
@@ -316,11 +465,29 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* Control buttons with proper touch targets */
 .btn-icon {
     color: var(--text-sec);
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color var(--transition-normal), background var(--transition-normal);
 }
 
-.btn-icon:hover:not(:disabled) {
+/* Hover only for non-touch devices */
+@media (hover: hover) and (pointer: fine) {
+    .btn-icon:hover:not(:disabled) {
+        color: var(--text-main);
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Active state for touch feedback */
+.btn-icon:active:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
     color: var(--text-main);
 }
 
@@ -337,11 +504,20 @@ button:disabled {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background var(--transition-normal), box-shadow var(--transition-normal);
 }
 
-.btn-play:hover:not(:disabled) {
-    background: #f5f5f5;
-    transform: scale(1.05);
+/* Hover only for non-touch - NO transform to prevent layout shift */
+@media (hover: hover) and (pointer: fine) {
+    .btn-play:hover:not(:disabled) {
+        background: #f5f5f5;
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+}
+
+/* Active state for touch feedback */
+.btn-play:active:not(:disabled) {
+    background: #e0e0e0;
 }
 
 .queue-preview {
@@ -524,37 +700,581 @@ button:focus-visible,
     cursor: pointer;
 }
 
-@media (max-width: 768px) {
+/* ======================
+   REDUCED MOTION
+   ====================== */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .progress-fill {
+        transition: none;
+    }
+}
+
+/* ======================
+   RESPONSIVE BREAKPOINTS
+   ====================== */
+
+/* Large Desktop (1440px+) */
+@media (min-width: 1440px) {
+    :root {
+        --player-width: 400px;
+        --queue-width: 520px;
+        --album-art-size: 300px;
+    }
+
+    .app-container {
+        max-width: 1080px;
+        max-height: 720px;
+    }
+}
+
+/* Desktop/Laptop (1024px - 1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) {
+    :root {
+        --player-width: 380px;
+        --queue-width: 480px;
+    }
+}
+
+/* Tablet Landscape & Small Laptops (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    :root {
+        --player-width: 340px;
+        --queue-width: 380px;
+        --album-art-size: 250px;
+    }
+
     .app-container {
         max-width: 100%;
-        padding: 16px;
+        padding: var(--spacing-md);
+        gap: 12px;
+    }
+
+    #player-view.state-view {
+        gap: 12px;
+    }
+}
+
+/* Tablet Portrait (768px) */
+@media (max-width: 768px) {
+    :root {
+        --player-width: 100%;
+        --queue-width: 100%;
+        --album-art-size: min(280px, 70vw);
+        --progress-bar-touch-height: 32px;
+        /* Larger touch target on mobile */
+    }
+
+    .app-container {
+        max-width: 100%;
+        max-height: 100%;
+        height: 100%;
+        padding: var(--spacing-md);
+        border-radius: 0;
     }
 
     #player-view.state-view {
         flex-direction: column;
-        gap: 16px;
+        gap: var(--spacing-sm);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .player-section {
         flex: 0 0 auto;
         width: 100%;
         max-width: 100%;
+        padding: var(--spacing-md);
     }
 
     .queue-section {
-        flex: 1;
-        min-height: 300px;
+        flex: 1 1 auto;
+        min-height: 120px;
+        max-height: none;
+        padding: var(--spacing-sm) var(--spacing-md);
     }
 
-    .album-art-container {
-        max-width: 280px;
-    }
-
-    #track-name {
-        font-size: 20px;
+    .queue-preview {
+        height: 100%;
     }
 
     .queue-preview h3 {
-        font-size: 16px;
+        font-size: 14px;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .queue-list {
+        max-height: calc(100% - 30px);
+    }
+
+    .queue-item {
+        padding: 8px 10px;
+        margin-bottom: 4px;
+        gap: 10px;
+    }
+
+    .q-thumb {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+    }
+
+    .q-title {
+        font-size: 14px;
+    }
+
+    .q-artist {
+        font-size: 12px;
+    }
+
+    /* Ensure progress bar is always expanded on touch */
+    .progress-bar::before {
+        height: 8px;
+    }
+
+    .progress-fill::after {
+        width: 16px;
+        height: 16px;
+        right: -8px;
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+
+    /* Skeleton responsive - tablet */
+    #loading-state.state-view {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        overflow-y: auto;
+    }
+
+    .skeleton-player-content {
+        gap: var(--spacing-sm);
+    }
+
+    .skeleton-controls {
+        gap: var(--spacing-sm);
+    }
+
+    .skeleton-queue-item {
+        height: 44px;
+    }
+}
+
+/* Mobile (375px - 767px) */
+@media (max-width: 576px) {
+    :root {
+        --album-art-size: min(200px, 50vw);
+        --spacing-lg: 16px;
+        --spacing-md: 10px;
+        --track-title-size: 18px;
+        --artist-size: 13px;
+    }
+
+    .app-container {
+        padding: var(--spacing-sm);
+    }
+
+    .player-section {
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: 16px;
+        gap: var(--spacing-sm);
+    }
+
+    .player-section header {
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .album-art-container {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .track-info {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .progress-container {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .queue-section {
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: 16px;
+        min-height: 100px;
+    }
+
+    .queue-preview h3 {
+        font-size: 13px;
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .queue-item {
+        padding: 6px 8px;
+        margin-bottom: 3px;
+        gap: 8px;
+    }
+
+    .q-thumb {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        border-radius: 4px;
+    }
+
+    .q-title {
+        font-size: 13px;
+    }
+
+    .q-artist {
+        font-size: 11px;
+    }
+
+    /* Compact controls for small screens */
+    .btn-play {
+        width: 56px;
+        height: 56px;
+    }
+
+    .btn-play svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    .btn-icon {
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    .btn-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .status-badge {
+        font-size: 9px;
+        padding: 4px 10px;
+    }
+
+    .time-labels {
+        font-size: 11px;
+    }
+
+    /* Skeleton responsive - mobile */
+    .skeleton-player-content {
+        gap: var(--spacing-xs);
+    }
+
+    .skeleton-track-info {
+        gap: var(--spacing-xs);
+    }
+
+    .skeleton-text {
+        height: 18px;
+    }
+
+    .skeleton-text-sm {
+        height: 12px;
+    }
+
+    .skeleton-controls {
+        gap: var(--spacing-xs);
+    }
+
+    .skeleton-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .skeleton-btn-play {
+        width: 48px;
+        height: 48px;
+    }
+
+    .skeleton-queue-item {
+        height: 40px;
+    }
+}
+
+/* Small Mobile (< 375px) */
+@media (max-width: 374px) {
+    :root {
+        --album-art-size: min(160px, 45vw);
+        --track-title-size: 16px;
+        --artist-size: 12px;
+        --spacing-sm: 6px;
+    }
+
+    .player-section {
+        padding: var(--spacing-sm);
+    }
+
+    .controls {
+        gap: 2px;
+    }
+
+    .btn-icon {
+        min-width: 36px;
+        min-height: 36px;
+    }
+
+    .btn-play {
+        width: 50px;
+        height: 50px;
+    }
+
+    .btn-play svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .queue-section {
+        padding: var(--spacing-sm);
+    }
+
+    .queue-preview h3 {
+        font-size: 12px;
+    }
+
+    .queue-item {
+        padding: 5px 6px;
+        gap: 6px;
+    }
+
+    .q-thumb {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+    }
+
+    .q-title {
+        font-size: 12px;
+    }
+
+    .q-artist {
+        font-size: 10px;
+    }
+
+    /* Skeleton responsive - small mobile */
+    .skeleton-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .skeleton-btn-play {
+        width: 44px;
+        height: 44px;
+    }
+
+    .skeleton-text {
+        height: 16px;
+    }
+
+    .skeleton-text-sm {
+        height: 10px;
+    }
+
+    .skeleton-queue-item {
+        height: 36px;
+    }
+}
+
+/* ======================
+   MOBILE LANDSCAPE MODE
+   ====================== */
+
+/* Mobile Landscape (height < 500px and landscape orientation) */
+@media (max-height: 500px) and (orientation: landscape) {
+    :root {
+        --album-art-size: min(140px, 35vh);
+        --track-title-size: 16px;
+        --artist-size: 12px;
+        --spacing-lg: 12px;
+        --spacing-md: 8px;
+    }
+
+    .app-container {
+        padding: var(--spacing-sm);
+        max-height: 100%;
+        border-radius: 0;
+    }
+
+    #player-view.state-view {
+        flex-direction: row;
+        gap: var(--spacing-md);
+        overflow: hidden;
+    }
+
+    .player-section {
+        flex: 0 0 auto;
+        width: auto;
+        min-width: 280px;
+        max-width: 320px;
+        padding: var(--spacing-sm) var(--spacing-md);
+        justify-content: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    /* Compact player layout for landscape */
+    .player-section header {
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .album-art-container {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .track-info {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    #track-name {
+        font-size: var(--track-title-size);
+        margin-bottom: 2px;
+    }
+
+    .progress-container {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .time-labels {
+        margin-bottom: 4px;
+        font-size: 10px;
+    }
+
+    .controls {
+        margin-bottom: 0;
+    }
+
+    .btn-play {
+        width: 48px;
+        height: 48px;
+    }
+
+    .btn-play svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .btn-icon {
+        min-width: 36px;
+        min-height: 36px;
+    }
+
+    .btn-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .status-badge {
+        font-size: 9px;
+        padding: 4px 10px;
+    }
+
+    /* Queue section in landscape */
+    .queue-section {
+        flex: 1;
+        min-width: 0;
+        max-height: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .queue-preview h3 {
+        font-size: 14px;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .queue-item {
+        padding: 6px 8px;
+        margin-bottom: 4px;
+    }
+
+    .q-thumb {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+    }
+
+    .q-title {
+        font-size: 13px;
+    }
+
+    .q-artist {
+        font-size: 11px;
+    }
+
+    /* Skeleton responsive - landscape */
+    #loading-state.state-view {
+        flex-direction: row;
+        gap: var(--spacing-md);
+        overflow: hidden;
+    }
+
+    .skeleton-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .skeleton-btn-play {
+        width: 44px;
+        height: 44px;
+    }
+
+    .skeleton-queue-item {
+        height: 36px;
+    }
+}
+
+/* Extra short landscape (height < 400px) - even more compact */
+@media (max-height: 400px) and (orientation: landscape) {
+    :root {
+        --album-art-size: min(100px, 28vh);
+    }
+
+    .player-section {
+        min-width: 240px;
+        max-width: 280px;
+    }
+
+    .album-art-container {
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .track-info {
+        margin-bottom: var(--spacing-xs);
+    }
+
+    #track-name {
+        font-size: 14px;
+    }
+
+    #artist-name {
+        font-size: 11px;
+    }
+
+    .btn-play {
+        width: 44px;
+        height: 44px;
+    }
+
+    .btn-icon {
+        min-width: 32px;
+        min-height: 32px;
+    }
+
+    .queue-item {
+        padding: 4px 6px;
+    }
+
+    .q-thumb {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
     }
 }
